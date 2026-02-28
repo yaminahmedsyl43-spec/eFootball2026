@@ -3,149 +3,158 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yamin Ahmed Vlog</title>
+<title>Yamin Ahmed Vlog – eFootball Tips, News & Meta Guides</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- ✅ Firebase COMPAT version — works on GitHub Pages, no build tools needed -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
 <style>
 :root{--purple:#8A2BE2;--neon:#00E5FF;--black:#0A0A0A;--green:#00FF6A;--pink:#FF0077;--white:#EAEAEA;--card:rgba(255,255,255,0.04);--border:rgba(0,229,255,0.2)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Exo 2',sans-serif;background:linear-gradient(135deg,#0A0A0A 0%,#0d001a 50%,#1B0033 100%);background-attachment:fixed;color:var(--white);min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
 
-/* SETUP BANNER */
-.setup-banner{background:rgba(255,140,0,0.1);border-bottom:1px solid rgba(255,160,0,0.4);padding:.7rem 1.5rem;text-align:center;font-family:'Rajdhani',sans-serif;font-size:.82rem;color:#ffb347;position:relative;z-index:2}
-.setup-banner a{color:var(--neon)}
-.setup-banner.hidden{display:none}
+/* BANNER */
+.banner{background:rgba(255,140,0,0.1);border-bottom:1px solid rgba(255,160,0,0.4);padding:.7rem 1.5rem;text-align:center;font-family:'Rajdhani',sans-serif;font-size:.82rem;color:#ffb347;position:relative;z-index:2}
+.banner a{color:var(--neon);cursor:pointer}
+.banner.hide{display:none}
+.banner.green{background:rgba(0,255,106,0.08);border-color:rgba(0,255,106,0.3);color:var(--green)}
 
 /* SPINNER */
-.spin-wrap{display:none;position:fixed;inset:0;background:rgba(10,10,10,.75);z-index:9100;align-items:center;justify-content:center;flex-direction:column;gap:1rem}
+.spin-wrap{display:none;position:fixed;inset:0;background:rgba(10,10,10,.8);z-index:9100;align-items:center;justify-content:center;flex-direction:column;gap:1rem}
 .spin-wrap.on{display:flex}
-.spin{width:48px;height:48px;border:3px solid rgba(0,229,255,.2);border-top-color:var(--neon);border-radius:50%;animation:spin .8s linear infinite}
+.spin{width:50px;height:50px;border:3px solid rgba(0,229,255,.15);border-top-color:var(--neon);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.spin-txt{font-family:'Rajdhani',sans-serif;font-size:.85rem;color:var(--neon);letter-spacing:2px}
+.spin-txt{font-family:'Rajdhani',sans-serif;font-size:.9rem;color:var(--neon);letter-spacing:3px}
 
 /* HEADER */
-header{position:sticky;top:0;z-index:1000;background:rgba(10,10,10,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem}
-.nav-top{display:flex;align-items:center;justify-content:space-between;padding:.8rem 0}
+header{position:sticky;top:0;z-index:1000;background:rgba(10,10,10,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-top{display:flex;align-items:center;justify-content:space-between;padding:.8rem 2rem}
 .logo{display:flex;align-items:center;gap:.8rem;text-decoration:none}
 .logo-svg{width:52px;height:52px;flex-shrink:0}
 .logo-main{font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:900;color:var(--neon);letter-spacing:1px;text-shadow:0 0 20px rgba(0,229,255,.5);line-height:1.1}
 .logo-sub{font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:600;color:var(--green);letter-spacing:3px;text-transform:uppercase}
-.nav-actions{display:flex;align-items:center;gap:1rem}
+.nav-btns{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
 .btn-yt{display:flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;padding:.5rem 1.2rem;border-radius:30px;text-decoration:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.85rem;box-shadow:0 0 20px rgba(255,0,119,.4);transition:all .3s}
 .btn-yt:hover{transform:translateY(-2px);box-shadow:0 0 35px rgba(255,0,119,.7)}
 .btn-admin{background:transparent;border:1px solid var(--green);color:var(--green);padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:1px;transition:all .3s}
 .btn-admin:hover{background:var(--green);color:#000}
-.nav-scroll{overflow-x:auto;scrollbar-width:none;padding:.5rem 0;border-top:1px solid rgba(255,255,255,.05)}
+.nav-scroll{overflow-x:auto;scrollbar-width:none;padding:.45rem 2rem;border-top:1px solid rgba(255,255,255,.05)}
 .nav-scroll::-webkit-scrollbar{display:none}
 .nav-links{display:flex;gap:.3rem;width:max-content}
-.nav-links a{text-decoration:none;color:rgba(234,234,234,.7);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:.78rem;letter-spacing:.5px;padding:.3rem .8rem;border-radius:4px;white-space:nowrap;transition:all .2s;text-transform:uppercase}
+.nav-links a{text-decoration:none;color:rgba(234,234,234,.65);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:.78rem;padding:.3rem .75rem;border-radius:4px;white-space:nowrap;transition:all .2s;text-transform:uppercase}
 .nav-links a:hover{color:var(--neon);background:rgba(0,229,255,.08)}
 
 /* HERO */
 .hero{position:relative;z-index:1;min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:4rem 2rem;overflow:hidden}
-.hero-glow{position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(138,43,226,.25) 0%,transparent 70%);left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
-.hero-glow2{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(0,229,255,.15) 0%,transparent 70%);right:10%;top:20%;pointer-events:none;animation:pulse 4s ease-in-out infinite}
+.glow1{position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(138,43,226,.22) 0%,transparent 70%);left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
+.glow2{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(0,229,255,.12) 0%,transparent 70%);right:10%;top:20%;pointer-events:none;animation:pulse 4s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
-.hero-content{position:relative;z-index:2}
-.hero-badge{display:inline-block;background:rgba(0,229,255,.1);border:1px solid var(--neon);color:var(--neon);padding:.3rem 1rem;border-radius:30px;font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:1.5rem;animation:gborder 2s ease-in-out infinite}
-@keyframes gborder{0%,100%{box-shadow:0 0 10px rgba(0,229,255,.3)}50%{box-shadow:0 0 25px rgba(0,229,255,.7)}}
-.hero h1{font-family:'Orbitron',sans-serif;font-size:clamp(2rem,5vw,4rem);font-weight:900;color:var(--neon);text-shadow:0 0 40px rgba(0,229,255,.4);line-height:1.1;margin-bottom:1rem}
-.hero h1 span{color:var(--green);text-shadow:0 0 30px rgba(0,255,106,.4)}
-.hero-sub{color:rgba(234,234,234,.8);margin-bottom:2.5rem;font-family:'Rajdhani',sans-serif;font-size:1.2rem;letter-spacing:1px}
-.btn-sub{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;padding:.9rem 2.5rem;border-radius:50px;text-decoration:none;font-family:'Orbitron',sans-serif;font-weight:700;font-size:.9rem;box-shadow:0 0 40px rgba(138,43,226,.5);transition:all .3s;letter-spacing:1px}
-.btn-sub:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 0 60px rgba(255,0,119,.7)}
-.hero-stats{display:flex;gap:3rem;justify-content:center;margin-top:3rem}
+.hero-inner{position:relative;z-index:2}
+.hero-badge{display:inline-block;background:rgba(0,229,255,.08);border:1px solid var(--neon);color:var(--neon);padding:.3rem 1rem;border-radius:30px;font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:1.5rem;animation:gborder 2s ease-in-out infinite}
+@keyframes gborder{0%,100%{box-shadow:0 0 8px rgba(0,229,255,.3)}50%{box-shadow:0 0 24px rgba(0,229,255,.7)}}
+.hero h1{font-family:'Orbitron',sans-serif;font-size:clamp(2rem,5vw,4rem);font-weight:900;color:var(--neon);text-shadow:0 0 40px rgba(0,229,255,.35);line-height:1.1;margin-bottom:1rem}
+.hero h1 span{color:var(--green);text-shadow:0 0 30px rgba(0,255,106,.35)}
+.hero-sub{font-family:'Rajdhani',sans-serif;font-size:1.2rem;color:rgba(234,234,234,.8);margin-bottom:2.5rem;letter-spacing:1px}
+.btn-sub{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;padding:.9rem 2.5rem;border-radius:50px;text-decoration:none;font-family:'Orbitron',sans-serif;font-weight:700;font-size:.9rem;box-shadow:0 0 40px rgba(138,43,226,.45);transition:all .3s;letter-spacing:1px}
+.btn-sub:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 0 60px rgba(255,0,119,.65)}
+.stats{display:flex;gap:3rem;justify-content:center;margin-top:3rem}
 .stat{text-align:center}
-.stat-num{font-family:'Orbitron',sans-serif;font-size:1.8rem;font-weight:900;color:var(--green);text-shadow:0 0 20px rgba(0,255,106,.5)}
-.stat-label{font-family:'Rajdhani',sans-serif;font-size:.7rem;color:rgba(234,234,234,.5);letter-spacing:2px;text-transform:uppercase}
+.stat-n{font-family:'Orbitron',sans-serif;font-size:1.8rem;font-weight:900;color:var(--green);text-shadow:0 0 20px rgba(0,255,106,.5)}
+.stat-l{font-family:'Rajdhani',sans-serif;font-size:.7rem;color:rgba(234,234,234,.45);letter-spacing:2px;text-transform:uppercase}
 
 /* SECTIONS */
 section{position:relative;z-index:1;padding:4rem 2rem;max-width:1400px;margin:0 auto}
-.sec-label{font-family:'Rajdhani',sans-serif;font-size:.7rem;font-weight:700;color:var(--green);letter-spacing:4px;text-transform:uppercase;margin-bottom:.4rem}
-.sec-title{font-family:'Orbitron',sans-serif;font-size:clamp(1.4rem,3vw,2rem);font-weight:700;color:var(--neon);margin-bottom:2.5rem}
+.sec-lbl{font-family:'Rajdhani',sans-serif;font-size:.7rem;font-weight:700;color:var(--green);letter-spacing:4px;text-transform:uppercase;margin-bottom:.4rem}
+.sec-ttl{font-family:'Orbitron',sans-serif;font-size:clamp(1.3rem,3vw,2rem);font-weight:700;color:var(--neon);margin-bottom:2.5rem}
 
-/* CARDS */
+/* POST CARDS */
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
-.post-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .3s;cursor:pointer;text-decoration:none;color:inherit;display:block}
+.post-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .3s;text-decoration:none;color:inherit;display:block}
 .post-card:hover{transform:translateY(-5px);border-color:var(--neon);box-shadow:0 10px 40px rgba(0,229,255,.15)}
-.card-img-wrap{position:relative;height:180px;overflow:hidden}
-.card-img-wrap img{width:100%;height:100%;object-fit:cover}
-.card-placeholder{height:180px;background:linear-gradient(135deg,#1a0030,#0a1530);display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative}
-.card-tag{position:absolute;top:10px;left:10px;background:var(--purple);color:#fff;font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:2px;padding:.2rem .6rem;border-radius:4px;text-transform:uppercase}
+.card-img-wrap{position:relative;height:180px;overflow:hidden;background:linear-gradient(135deg,#1a0030,#0a1530);display:flex;align-items:center;justify-content:center}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.card-tag{position:absolute;top:10px;left:10px;background:var(--purple);color:#fff;font-family:'Rajdhani',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:2px;padding:.2rem .6rem;border-radius:4px;text-transform:uppercase;z-index:1}
+.card-emoji{font-size:2.8rem;position:relative;z-index:0}
 .card-body{padding:1.2rem}
 .card-title{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;color:var(--white);margin-bottom:.4rem;line-height:1.3}
 .card-desc{font-size:.8rem;color:rgba(234,234,234,.6);line-height:1.5;margin-bottom:.8rem}
 .card-meta{display:flex;justify-content:space-between;font-family:'Rajdhani',sans-serif;font-size:.7rem;color:var(--green);letter-spacing:1px}
 
-/* CATS */
-.cats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem}
-.cat-btn{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1rem;text-align:center;cursor:pointer;transition:all .3s;text-decoration:none;color:var(--white);display:block}
-.cat-btn:hover{transform:translateY(-4px);border-color:var(--green);box-shadow:0 8px 30px rgba(0,255,106,.2)}
-.cat-icon{font-size:1.8rem;display:block;margin-bottom:.5rem}
-.cat-name{font-family:'Rajdhani',sans-serif;font-size:.8rem;font-weight:700;color:var(--neon);letter-spacing:.5px;text-transform:uppercase}
+/* CATEGORIES */
+.cats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:1rem}
+.cat-btn{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1rem;text-align:center;transition:all .3s;text-decoration:none;color:var(--white);display:block}
+.cat-btn:hover{transform:translateY(-4px);border-color:var(--green);box-shadow:0 8px 30px rgba(0,255,106,.18)}
+.cat-ico{font-size:1.8rem;display:block;margin-bottom:.5rem}
+.cat-nm{font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:700;color:var(--neon);letter-spacing:.5px;text-transform:uppercase}
 
-/* VIDEO */
+/* FEATURED VIDEO */
 .vid-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr}
 @media(max-width:768px){.vid-wrap{grid-template-columns:1fr}}
-.vid-embed{background:#000;min-height:280px}
-.vid-embed iframe{width:100%;height:100%;min-height:280px;border:none;display:block}
+.vid-frame{background:#000;min-height:280px}
+.vid-frame iframe{width:100%;height:100%;min-height:280px;border:none;display:block}
 .vid-info{padding:2rem;display:flex;flex-direction:column;justify-content:center}
-.vid-tag{display:inline-block;background:var(--pink);color:#fff;font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:2px;padding:.2rem .6rem;border-radius:4px;margin-bottom:1rem;text-transform:uppercase}
-.vid-title{font-family:'Orbitron',sans-serif;font-size:1.2rem;font-weight:700;color:var(--neon);margin-bottom:1rem;line-height:1.4}
-.vid-desc{color:rgba(234,234,234,.7);font-size:.85rem;line-height:1.6}
+.vid-tag{display:inline-block;background:var(--pink);color:#fff;font-family:'Rajdhani',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:2px;padding:.2rem .6rem;border-radius:4px;margin-bottom:1rem;text-transform:uppercase}
+.vid-title{font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:700;color:var(--neon);margin-bottom:1rem;line-height:1.4}
+.vid-desc{color:rgba(234,234,234,.65);font-size:.84rem;line-height:1.6}
 
-/* SQUADS */
+/* SQUAD CARDS */
 .squad-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.2rem}
 .squad-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:all .3s}
 .squad-card:hover{border-color:var(--pink);box-shadow:0 8px 30px rgba(255,0,119,.15)}
-.squad-img{width:100%;height:150px;overflow:hidden;background:linear-gradient(135deg,#200040,#001030);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
-.squad-img img{width:100%;height:100%;object-fit:cover}
-.squad-body{padding:1rem}
-.squad-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.95rem;color:var(--white);margin-bottom:.5rem}
-.upvote-row{display:flex;align-items:center;gap:.8rem}
-.upvote-btn{background:transparent;border:1px solid var(--green);color:var(--green);padding:.3rem .8rem;border-radius:4px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.75rem;transition:all .2s}
-.upvote-btn:hover,.upvote-btn.active{background:var(--green);color:#000}
-.upvote-ct{font-family:'Orbitron',sans-serif;font-size:.8rem;color:var(--green)}
+.sq-img{width:100%;height:150px;overflow:hidden;background:linear-gradient(135deg,#200040,#001030);display:flex;align-items:center;justify-content:center;font-size:2.5rem;position:relative}
+.sq-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.sq-body{padding:1rem}
+.sq-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.95rem;color:var(--white);margin-bottom:.3rem}
+.sq-author{font-size:.72rem;color:rgba(234,234,234,.45);font-family:'Rajdhani',sans-serif;margin-bottom:.5rem}
+.sq-desc{font-size:.78rem;color:rgba(234,234,234,.6);margin-bottom:.8rem;line-height:1.4}
+.uprow{display:flex;align-items:center;gap:.8rem}
+.up-btn{background:transparent;border:1px solid var(--green);color:var(--green);padding:.3rem .8rem;border-radius:4px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.75rem;transition:all .2s}
+.up-btn:hover,.up-btn.voted{background:var(--green);color:#000}
+.up-ct{font-family:'Orbitron',sans-serif;font-size:.8rem;color:var(--green)}
 .com-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
 .btn-upload{background:linear-gradient(135deg,var(--purple),var(--neon));color:#fff;padding:.7rem 1.5rem;border-radius:8px;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.9rem;letter-spacing:1px;transition:all .3s}
 .btn-upload:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(138,43,226,.5)}
 
 /* FOOTER */
-footer{position:relative;z-index:1;background:rgba(0,0,0,.6);border-top:1px solid var(--border);padding:3rem 2rem 2rem;margin-top:4rem}
+footer{position:relative;z-index:1;background:rgba(0,0,0,.65);border-top:1px solid var(--border);padding:3rem 2rem 2rem;margin-top:4rem}
 .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;max-width:1400px;margin:0 auto 2rem}
 @media(max-width:768px){.foot-grid{grid-template-columns:1fr}}
-.foot-about p{color:rgba(234,234,234,.6);font-size:.85rem;line-height:1.6;margin-top:.8rem}
-.foot-title{font-family:'Orbitron',sans-serif;font-size:.8rem;color:var(--green);margin-bottom:1rem;letter-spacing:2px}
-.foot-links{list-style:none;display:flex;flex-direction:column;gap:.5rem}
-.foot-links a{color:rgba(234,234,234,.6);text-decoration:none;font-size:.82rem;transition:color .2s;font-family:'Rajdhani',sans-serif}
-.foot-links a:hover{color:var(--neon)}
-.foot-bottom{text-align:center;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.05);color:rgba(234,234,234,.4);font-size:.75rem;font-family:'Rajdhani',sans-serif;max-width:1400px;margin:0 auto}
-.neon-sep{height:1px;background:linear-gradient(90deg,transparent,var(--purple),var(--neon),var(--green),transparent);margin:0 2rem;opacity:.4}
+.foot-p{color:rgba(234,234,234,.6);font-size:.84rem;line-height:1.6;margin-top:.8rem}
+.foot-h{font-family:'Orbitron',sans-serif;font-size:.78rem;color:var(--green);margin-bottom:1rem;letter-spacing:2px}
+.foot-ul{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.foot-ul a{color:rgba(234,234,234,.6);text-decoration:none;font-size:.82rem;transition:color .2s;font-family:'Rajdhani',sans-serif}
+.foot-ul a:hover{color:var(--neon)}
+.foot-copy{text-align:center;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.05);color:rgba(234,234,234,.35);font-size:.75rem;font-family:'Rajdhani',sans-serif;max-width:1400px;margin:0 auto}
+.neon-sep{height:1px;background:linear-gradient(90deg,transparent,var(--purple),var(--neon),var(--green),transparent);margin:0;opacity:.35}
 
-/* PASSWORD */
+/* PASSWORD MODAL */
 .pw-ov{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:6000;display:none;align-items:center;justify-content:center}
-.pw-ov.open{display:flex}
-.pw-box{background:#0d0020;border:1px solid var(--purple);border-radius:16px;padding:2.5rem 2rem;width:360px;max-width:92vw;text-align:center;box-shadow:0 0 60px rgba(138,43,226,.5);animation:pdrop .3s ease}
-@keyframes pdrop{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}
-.pw-icon{font-size:2.5rem;margin-bottom:.8rem}
-.pw-title{font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--neon);margin-bottom:.4rem;letter-spacing:2px}
-.pw-sub{font-family:'Rajdhani',sans-serif;font-size:.8rem;color:rgba(234,234,234,.5);margin-bottom:1.5rem;letter-spacing:1px}
-.pw-wrap{position:relative;margin-bottom:1.2rem}
-.pw-inp{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.75rem 2.8rem .75rem 1rem;color:var(--white);font-family:'Exo 2',sans-serif;font-size:1rem;outline:none;letter-spacing:3px;text-align:center;transition:border-color .2s}
-.pw-inp:focus{border-color:var(--purple);box-shadow:0 0 15px rgba(138,43,226,.3)}
-.pw-inp.err{border-color:var(--pink);animation:shake .3s}
+.pw-ov.on{display:flex}
+.pw-box{background:#0d0020;border:1px solid var(--purple);border-radius:16px;padding:2.5rem 2rem;width:360px;max-width:92vw;text-align:center;box-shadow:0 0 60px rgba(138,43,226,.5);animation:drop .3s ease}
+@keyframes drop{from{transform:translateY(-28px);opacity:0}to{transform:translateY(0);opacity:1}}
+.pw-ico{font-size:2.5rem;margin-bottom:.8rem}
+.pw-ttl{font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--neon);margin-bottom:.4rem;letter-spacing:2px}
+.pw-sub{font-family:'Rajdhani',sans-serif;font-size:.8rem;color:rgba(234,234,234,.45);margin-bottom:1.5rem;letter-spacing:1px}
+.pw-row{position:relative;margin-bottom:1.2rem}
+.pw-in{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.75rem 2.8rem .75rem 1rem;color:var(--white);font-family:'Exo 2',sans-serif;font-size:1rem;outline:none;letter-spacing:3px;text-align:center;transition:border-color .2s}
+.pw-in:focus{border-color:var(--purple);box-shadow:0 0 15px rgba(138,43,226,.25)}
+.pw-in.shake{border-color:var(--pink);animation:shake .3s}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-.pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(234,234,234,.5);cursor:pointer;font-size:1rem}
-.pw-err{font-family:'Rajdhani',sans-serif;font-size:.8rem;color:var(--pink);margin-bottom:1rem;letter-spacing:1px;min-height:1.2rem}
-.pw-go{width:100%;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;padding:.85rem;border-radius:8px;cursor:pointer;font-family:'Orbitron',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:2px;transition:all .3s;margin-bottom:1rem}
-.pw-go:hover{box-shadow:0 8px 25px rgba(138,43,226,.6);transform:translateY(-2px)}
-.pw-cancel{background:none;border:none;color:rgba(234,234,234,.4);cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:.8rem;letter-spacing:1px}
+.pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(234,234,234,.45);cursor:pointer;font-size:1rem}
+.pw-err{font-family:'Rajdhani',sans-serif;font-size:.8rem;color:var(--pink);margin-bottom:1rem;min-height:1.1rem;letter-spacing:.5px}
+.pw-btn{width:100%;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;padding:.85rem;border-radius:8px;cursor:pointer;font-family:'Orbitron',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:2px;transition:all .3s;margin-bottom:1rem}
+.pw-btn:hover{box-shadow:0 8px 25px rgba(138,43,226,.55);transform:translateY(-2px)}
+.pw-cancel{background:none;border:none;color:rgba(234,234,234,.35);cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:.8rem}
 .pw-cancel:hover{color:var(--white)}
-.pw-att{margin-top:.8rem;font-family:'Rajdhani',sans-serif;font-size:.72rem;color:rgba(234,234,234,.3);letter-spacing:1px}
+.pw-att{margin-top:.8rem;font-family:'Rajdhani',sans-serif;font-size:.7rem;color:rgba(234,234,234,.28);letter-spacing:1px}
 
-/* ADMIN */
-.adm-ov{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:5000;display:none;overflow-y:auto}
-.adm-ov.open{display:block}
+/* ADMIN PANEL */
+.adm-ov{position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:5000;display:none;overflow-y:auto}
+.adm-ov.on{display:block}
 .adm-panel{background:#0d0020;border:1px solid var(--purple);border-radius:16px;max-width:900px;margin:2rem auto;overflow:hidden;box-shadow:0 0 60px rgba(138,43,226,.4)}
 .adm-hdr{background:linear-gradient(135deg,var(--purple),#3d00a8);padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center}
 .adm-hdr h2{font-family:'Orbitron',sans-serif;font-size:1.1rem;color:#fff;letter-spacing:2px}
@@ -153,71 +162,82 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.6);border-top:1px soli
 .adm-close:hover{background:var(--pink)}
 .adm-body{padding:2rem}
 .adm-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;border-bottom:1px solid var(--border);padding-bottom:1rem}
-.adm-tab{background:transparent;border:1px solid var(--border);color:rgba(234,234,234,.6);padding:.4rem .9rem;border-radius:6px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:.75rem;letter-spacing:.5px;transition:all .2s;text-transform:uppercase}
+.adm-tab{background:transparent;border:1px solid var(--border);color:rgba(234,234,234,.55);padding:.4rem .85rem;border-radius:6px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:.75rem;letter-spacing:.5px;transition:all .2s;text-transform:uppercase}
 .adm-tab.on,.adm-tab:hover{background:var(--purple);border-color:var(--purple);color:#fff}
 .tab{display:none}.tab.on{display:block}
+
+/* FORM */
 .fg{margin-bottom:1.2rem}
-.fg label{display:block;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.8rem;color:var(--neon);letter-spacing:1px;text-transform:uppercase;margin-bottom:.4rem}
-.fg input,.fg textarea,.fg select{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:.7rem 1rem;color:var(--white);font-family:'Exo 2',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s}
-.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--purple);box-shadow:0 0 15px rgba(138,43,226,.2)}
-.fg textarea{resize:vertical;min-height:90px}
+.fg label{display:block;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.78rem;color:var(--neon);letter-spacing:1px;text-transform:uppercase;margin-bottom:.4rem}
+.fg input,.fg textarea,.fg select{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:.7rem 1rem;color:var(--white);font-family:'Exo 2',sans-serif;font-size:.87rem;outline:none;transition:border-color .2s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--purple);box-shadow:0 0 12px rgba(138,43,226,.2)}
+.fg textarea{resize:vertical;min-height:88px}
 .fg select option{background:#0d0020}
 .fg2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-@media(max-width:600px){.fg2{grid-template-columns:1fr}}
+@media(max-width:580px){.fg2{grid-template-columns:1fr}}
 
-/* IMAGE UPLOAD AREA */
-.img-drop{border:2px dashed var(--border);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .3s;position:relative;background:rgba(0,229,255,.02)}
-.img-drop:hover{border-color:var(--purple);background:rgba(138,43,226,.05)}
-.img-drop.drag{border-color:var(--green);background:rgba(0,255,106,.05)}
+/* IMAGE UPLOAD */
+.img-drop{border:2px dashed rgba(0,229,255,.25);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .3s;position:relative;background:rgba(0,229,255,.015)}
+.img-drop:hover,.img-drop.drag{border-color:var(--purple);background:rgba(138,43,226,.06)}
 .img-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.up-icon{font-size:2rem;margin-bottom:.5rem;display:block}
-.up-txt{font-family:'Rajdhani',sans-serif;font-size:.85rem;color:rgba(234,234,234,.6)}
-.up-txt span{color:var(--neon);font-weight:700}
-.prog-wrap{margin-top:.8rem;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;display:none}
+.up-ico{font-size:2rem;display:block;margin-bottom:.5rem}
+.up-txt{font-family:'Rajdhani',sans-serif;font-size:.84rem;color:rgba(234,234,234,.55)}
+.up-txt b{color:var(--neon)}
+.prog-wrap{margin-top:.8rem;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;display:none}
 .prog-wrap.on{display:block}
-.prog-bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--neon));width:0%;transition:width .3s;border-radius:2px}
-.prev-box{margin-top:1rem;border-radius:8px;overflow:hidden;display:none;max-height:200px;position:relative}
-.prev-box img{width:100%;height:200px;object-fit:cover}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--neon));width:0%;transition:width .25s;border-radius:2px}
+.prev-box{margin-top:1rem;border-radius:8px;overflow:hidden;display:none;position:relative}
+.prev-box img{width:100%;height:200px;object-fit:cover;display:block}
 .prev-box.on{display:block}
-.rm-img{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.7);border:1px solid var(--pink);color:var(--pink);border-radius:4px;padding:.2rem .5rem;cursor:pointer;font-size:.7rem;font-family:'Rajdhani',sans-serif;font-weight:700}
+.rm-btn{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.75);border:1px solid var(--pink);color:var(--pink);border-radius:5px;padding:.2rem .55rem;cursor:pointer;font-size:.7rem;font-family:'Rajdhani',sans-serif;font-weight:700}
 
-/* FIREBASE INFO BOX */
-.fb-info{background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.2);border-radius:8px;padding:.8rem 1rem;margin-bottom:1.5rem;font-family:'Rajdhani',sans-serif;font-size:.78rem;color:rgba(234,234,234,.6);line-height:1.5}
-.fb-info strong{color:var(--neon)}
+/* FB INFO BOX */
+.fb-info{background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.18);border-radius:8px;padding:.8rem 1rem;margin-bottom:1.5rem;font-family:'Rajdhani',sans-serif;font-size:.8rem;color:rgba(234,234,234,.6);line-height:1.6}
+.fb-info b{color:var(--neon)}
 
 .btn-save{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:none;padding:.8rem 2rem;border-radius:8px;cursor:pointer;font-family:'Orbitron',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:1px;transition:all .3s;margin-top:.5rem}
 .btn-save:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(138,43,226,.5)}
-.btn-save:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-save:disabled{opacity:.45;cursor:not-allowed;transform:none}
 
 /* MANAGE LIST */
-.adm-item{display:flex;align-items:center;gap:1rem;padding:.8rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;margin-bottom:.6rem}
-.adm-thumb{width:50px;height:40px;border-radius:4px;background:linear-gradient(135deg,#200040,#001030);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;overflow:hidden}
-.adm-thumb img{width:100%;height:100%;object-fit:cover}
-.adm-info{flex:1}
-.adm-ititle{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.85rem;color:var(--white)}
-.adm-icat{font-size:.7rem;color:var(--green);font-family:'Rajdhani',sans-serif;letter-spacing:1px}
-.btn-del{background:transparent;border:1px solid var(--pink);color:var(--pink);padding:.25rem .6rem;border-radius:4px;cursor:pointer;font-size:.7rem;font-family:'Rajdhani',sans-serif;font-weight:700;transition:all .2s}
+.m-item{display:flex;align-items:center;gap:1rem;padding:.75rem 1rem;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:8px;margin-bottom:.6rem;transition:all .2s}
+.m-item:hover{border-color:rgba(0,229,255,.35)}
+.m-thumb{width:50px;height:40px;border-radius:4px;background:linear-gradient(135deg,#200040,#001030);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;overflow:hidden}
+.m-thumb img{width:100%;height:100%;object-fit:cover}
+.m-info{flex:1;min-width:0}
+.m-ttl{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.84rem;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-cat{font-size:.68rem;color:var(--green);font-family:'Rajdhani',sans-serif;letter-spacing:1px}
+.btn-del{background:transparent;border:1px solid var(--pink);color:var(--pink);padding:.25rem .6rem;border-radius:4px;cursor:pointer;font-size:.7rem;font-family:'Rajdhani',sans-serif;font-weight:700;flex-shrink:0;transition:all .2s}
 .btn-del:hover{background:var(--pink);color:#fff}
 
+/* FIREBASE SETUP BOX */
+.fb-setup{background:rgba(255,100,0,.07);border:1px solid rgba(255,160,0,.28);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem}
+.fb-setup-ttl{font-family:'Orbitron',sans-serif;font-size:.85rem;color:#ffb347;margin-bottom:1rem;letter-spacing:1px}
+.fb-steps{font-family:'Rajdhani',sans-serif;font-size:.85rem;color:rgba(234,234,234,.8);line-height:2.1}
+.fb-steps a{color:var(--green)}
+.fb-steps code{background:rgba(255,255,255,.1);padding:.1rem .4rem;border-radius:3px;font-size:.82rem}
+
 /* TOAST */
-.toast{position:fixed;bottom:2rem;right:2rem;background:var(--green);color:#000;padding:.8rem 1.5rem;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:.8rem;font-weight:700;z-index:9999;transform:translateY(100px);opacity:0;transition:all .4s;max-width:300px}
+.toast{position:fixed;bottom:2rem;right:2rem;padding:.85rem 1.5rem;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:.78rem;font-weight:700;z-index:9999;transform:translateY(110px);opacity:0;transition:all .4s;max-width:320px;line-height:1.4}
 .toast.on{transform:translateY(0);opacity:1}
-.toast.red{background:var(--pink);color:#fff}
+.toast.ok{background:var(--green);color:#000}
+.toast.err{background:var(--pink);color:#fff}
+.toast.warn{background:#ff9500;color:#000}
 
-/* EMPTY STATE */
-.empty{text-align:center;padding:3rem;color:rgba(234,234,234,.4);font-family:'Rajdhani',sans-serif;font-size:.9rem;letter-spacing:1px}
-.empty-icon{font-size:3rem;margin-bottom:1rem}
+/* EMPTY */
+.empty{text-align:center;padding:3rem;color:rgba(234,234,234,.35);font-family:'Rajdhani',sans-serif;font-size:.9rem;letter-spacing:1px}
+.empty-ico{font-size:3rem;margin-bottom:1rem}
 
-@media(max-width:768px){.hero-stats{gap:1.5rem}.stat-num{font-size:1.3rem}.nav-top{flex-wrap:wrap;gap:.5rem}}
+@media(max-width:600px){.stats{gap:1.5rem}.stat-n{font-size:1.4rem}.nav-top{flex-wrap:wrap;gap:.5rem}.nav-btns{width:100%;justify-content:flex-end}}
 </style>
 </head>
 <body>
 
-<!-- SETUP BANNER -->
-<div class="setup-banner" id="setupBanner">
-  ⚠️ <strong>Firebase not connected yet</strong> — images & posts only save on this device until you connect Firebase.
-  <a href="#" onclick="event.preventDefault();openAdmin('firebase')">Click here to set up Firebase (5 min, free)</a>
-  <button onclick="document.getElementById('setupBanner').classList.add('hidden')" style="margin-left:1rem;background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer">✕</button>
+<!-- BANNER -->
+<div class="banner" id="banner">
+  ⚠️ <strong>Firebase not connected yet</strong> — posts only save on this device.
+  <a onclick="openAdmin('firebase')"> Set up Firebase (free, 5 min) →</a>
+  <button onclick="document.getElementById('banner').classList.add('hide')" style="margin-left:.8rem;background:none;border:none;color:rgba(255,255,255,.35);cursor:pointer;font-size:1rem">✕</button>
 </div>
 
 <!-- SPINNER -->
@@ -232,21 +252,25 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.6);border-top:1px soli
     <a href="#" class="logo">
       <svg class="logo-svg" viewBox="0 0 52 52" fill="none">
         <defs>
-          <linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00E5FF"/><stop offset="100%" stop-color="#8A2BE2"/></linearGradient>
-          <linearGradient id="lg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FF6A"/><stop offset="100%" stop-color="#00E5FF"/></linearGradient>
+          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00E5FF"/><stop offset="100%" stop-color="#8A2BE2"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00FF6A"/><stop offset="100%" stop-color="#00E5FF"/>
+          </linearGradient>
           <filter id="gw"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         </defs>
-        <path d="M26 3L46 12L46 28C46 38 36 46 26 49C16 46 6 38 6 28L6 12Z" fill="url(#lg1)" opacity=".15" stroke="url(#lg1)" stroke-width="1.5"/>
-        <path d="M26 8L42 16L42 28C42 36 34 43 26 46C18 43 10 36 10 28L10 16Z" fill="none" stroke="url(#lg2)" stroke-width=".8" opacity=".6"/>
-        <text x="26" y="33" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="18" font-weight="900" fill="url(#lg1)" filter="url(#gw)">Y</text>
+        <path d="M26 3L46 12L46 28C46 38 36 46 26 49C16 46 6 38 6 28L6 12Z" fill="url(#g1)" opacity=".15" stroke="url(#g1)" stroke-width="1.5"/>
+        <path d="M26 8L42 16L42 28C42 36 34 43 26 46C18 43 10 36 10 28L10 16Z" fill="none" stroke="url(#g2)" stroke-width=".8" opacity=".55"/>
+        <text x="26" y="33" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="18" font-weight="900" fill="url(#g1)" filter="url(#gw)">Y</text>
         <circle cx="6" cy="12" r="2" fill="#00E5FF" opacity=".8"/>
         <circle cx="46" cy="12" r="2" fill="#8A2BE2" opacity=".8"/>
         <circle cx="26" cy="49" r="2" fill="#00FF6A" opacity=".8"/>
-        <line x1="14" y1="2" x2="38" y2="2" stroke="url(#lg2)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="14" y1="2" x2="38" y2="2" stroke="url(#g2)" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
       <div><div class="logo-main">YAMIN AHMED</div><div class="logo-sub">eFootball Vlog</div></div>
     </a>
-    <div class="nav-actions">
+    <div class="nav-btns">
       <button class="btn-admin" onclick="openAdmin()">⚙ ADMIN</button>
       <a href="https://www.youtube.com/@YaminOfficial-iq3wp" target="_blank" class="btn-yt">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.3 5 12 5 12 5s-4.3 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.3.9C7 19 12 19 12 19s4.3 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM10 14.5v-5l5.5 2.5L10 14.5z"/></svg>
@@ -256,15 +280,15 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.6);border-top:1px soli
   </div>
   <nav class="nav-scroll">
     <div class="nav-links">
-      <a href="#home">Home</a><a href="#updates">News &amp; Patch Notes</a><a href="#builds">Player Build Guides</a><a href="#meta">Meta Playbook</a><a href="#f2p">F2P Hidden Gems</a><a href="#reviews">Manager Reviews</a><a href="#skills">Skill Move Tutorial</a><a href="#defending">Defending Masterclass</a><a href="#squads">Squad Showcases</a><a href="#form">Weekly Form Updates</a><a href="#coins">Coin &amp; GP Farming</a><a href="#ai">AI Creative Studio</a><a href="#compare">Comparison Tool</a><a href="#formation">Formation Lab</a><a href="#mobile">Mobile vs Console</a><a href="#tournament">Tournament Hub</a><a href="#contact">Contact</a>
+      <a href="#home">Home</a><a href="#updates">News &amp; Patch Notes</a><a href="#builds">Player Builds</a><a href="#meta">Meta Playbook</a><a href="#f2p">F2P Gems</a><a href="#reviews">Manager Reviews</a><a href="#skills">Skill Moves</a><a href="#defending">Defending</a><a href="#squads">Squad Showcases</a><a href="#form">Weekly Form</a><a href="#coins">Coin Farming</a><a href="#ai">AI Studio</a><a href="#compare">Comparison</a><a href="#formation">Formation Lab</a><a href="#mobile">Mobile vs Console</a><a href="#tournament">Tournament Hub</a><a href="#contact">Contact</a>
     </div>
   </nav>
 </header>
 
 <!-- HERO -->
 <div class="hero" id="home">
-  <div class="hero-glow"></div><div class="hero-glow2"></div>
-  <div class="hero-content">
+  <div class="glow1"></div><div class="glow2"></div>
+  <div class="hero-inner">
     <div class="hero-badge">⚡ eFootball Community Hub</div>
     <h1>Welcome to<br><span>Yamin Ahmed</span> Vlog</h1>
     <p class="hero-sub">Your Home for eFootball Tips, News &amp; Meta Guides</p>
@@ -272,54 +296,56 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.6);border-top:1px soli
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.3 5 12 5 12 5s-4.3 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.3.9C7 19 12 19 12 19s4.3 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM10 14.5v-5l5.5 2.5L10 14.5z"/></svg>
       Subscribe on YouTube
     </a>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-num" id="postCount">0</div><div class="stat-label">Posts</div></div>
-      <div class="stat"><div class="stat-num">17</div><div class="stat-label">Categories</div></div>
-      <div class="stat"><div class="stat-num" id="squadCount">0</div><div class="stat-label">Showcases</div></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-n" id="postCt">0</div><div class="stat-l">Posts</div></div>
+      <div class="stat"><div class="stat-n">17</div><div class="stat-l">Categories</div></div>
+      <div class="stat"><div class="stat-n" id="squadCt">0</div><div class="stat-l">Showcases</div></div>
     </div>
   </div>
 </div>
 <div class="neon-sep"></div>
 
-<!-- LATEST UPDATES -->
+<!-- LATEST POSTS -->
 <section id="updates">
-  <div class="sec-label">📡 Feed</div>
-  <div class="sec-title">Latest Updates</div>
-  <div class="cards-grid" id="postsGrid"><div class="empty" style="grid-column:1/-1"><div class="empty-icon">📭</div>Loading posts...</div></div>
+  <div class="sec-lbl">📡 Feed</div>
+  <div class="sec-ttl">Latest Updates</div>
+  <div class="cards-grid" id="postsGrid">
+    <div class="empty" style="grid-column:1/-1"><div class="empty-ico">📭</div>Loading posts...</div>
+  </div>
 </section>
 <div class="neon-sep"></div>
 
 <!-- CATEGORIES -->
 <section>
-  <div class="sec-label">🗂️ Browse</div>
-  <div class="sec-title">Top Categories</div>
+  <div class="sec-lbl">🗂️ Browse</div>
+  <div class="sec-ttl">Top Categories</div>
   <div class="cats-grid">
-    <a href="#updates" class="cat-btn"><span class="cat-icon">📰</span><span class="cat-name">News &amp; Patch Notes</span></a>
-    <a href="#builds" class="cat-btn"><span class="cat-icon">⚡</span><span class="cat-name">Player Build Guides</span></a>
-    <a href="#meta" class="cat-btn"><span class="cat-icon">📖</span><span class="cat-name">Meta Playbook</span></a>
-    <a href="#f2p" class="cat-btn"><span class="cat-icon">💎</span><span class="cat-name">F2P Hidden Gems</span></a>
-    <a href="#reviews" class="cat-btn"><span class="cat-icon">🧠</span><span class="cat-name">Manager Reviews</span></a>
-    <a href="#skills" class="cat-btn"><span class="cat-icon">🎯</span><span class="cat-name">Skill Move Tutorial</span></a>
-    <a href="#defending" class="cat-btn"><span class="cat-icon">🛡️</span><span class="cat-name">Defending Masterclass</span></a>
-    <a href="#squads" class="cat-btn"><span class="cat-icon">👥</span><span class="cat-name">Squad Showcases</span></a>
-    <a href="#form" class="cat-btn"><span class="cat-icon">📈</span><span class="cat-name">Weekly Form Updates</span></a>
-    <a href="#coins" class="cat-btn"><span class="cat-icon">🪙</span><span class="cat-name">Coin &amp; GP Farming</span></a>
-    <a href="#ai" class="cat-btn"><span class="cat-icon">🤖</span><span class="cat-name">AI Creative Studio</span></a>
-    <a href="#compare" class="cat-btn"><span class="cat-icon">⚖️</span><span class="cat-name">Comparison Tool</span></a>
-    <a href="#formation" class="cat-btn"><span class="cat-icon">🔬</span><span class="cat-name">Formation Lab</span></a>
-    <a href="#mobile" class="cat-btn"><span class="cat-icon">📱</span><span class="cat-name">Mobile vs Console</span></a>
-    <a href="#tournament" class="cat-btn"><span class="cat-icon">🏆</span><span class="cat-name">Tournament Hub</span></a>
-    <a href="#contact" class="cat-btn"><span class="cat-icon">📬</span><span class="cat-name">Contact</span></a>
+    <a href="#updates" class="cat-btn"><span class="cat-ico">📰</span><span class="cat-nm">News &amp; Patch Notes</span></a>
+    <a href="#builds" class="cat-btn"><span class="cat-ico">⚡</span><span class="cat-nm">Player Build Guides</span></a>
+    <a href="#meta" class="cat-btn"><span class="cat-ico">📖</span><span class="cat-nm">Meta Playbook</span></a>
+    <a href="#f2p" class="cat-btn"><span class="cat-ico">💎</span><span class="cat-nm">F2P Hidden Gems</span></a>
+    <a href="#reviews" class="cat-btn"><span class="cat-ico">🧠</span><span class="cat-nm">Manager Reviews</span></a>
+    <a href="#skills" class="cat-btn"><span class="cat-ico">🎯</span><span class="cat-nm">Skill Move Tutorial</span></a>
+    <a href="#defending" class="cat-btn"><span class="cat-ico">🛡️</span><span class="cat-nm">Defending Masterclass</span></a>
+    <a href="#squads" class="cat-btn"><span class="cat-ico">👥</span><span class="cat-nm">Squad Showcases</span></a>
+    <a href="#form" class="cat-btn"><span class="cat-ico">📈</span><span class="cat-nm">Weekly Form Updates</span></a>
+    <a href="#coins" class="cat-btn"><span class="cat-ico">🪙</span><span class="cat-nm">Coin &amp; GP Farming</span></a>
+    <a href="#ai" class="cat-btn"><span class="cat-ico">🤖</span><span class="cat-nm">AI Creative Studio</span></a>
+    <a href="#compare" class="cat-btn"><span class="cat-ico">⚖️</span><span class="cat-nm">Comparison Tool</span></a>
+    <a href="#formation" class="cat-btn"><span class="cat-ico">🔬</span><span class="cat-nm">Formation Laboratory</span></a>
+    <a href="#mobile" class="cat-btn"><span class="cat-ico">📱</span><span class="cat-nm">Mobile vs Console</span></a>
+    <a href="#tournament" class="cat-btn"><span class="cat-ico">🏆</span><span class="cat-nm">Tournament Hub</span></a>
+    <a href="#contact" class="cat-btn"><span class="cat-ico">📬</span><span class="cat-nm">Contact</span></a>
   </div>
 </section>
 <div class="neon-sep"></div>
 
 <!-- FEATURED VIDEO -->
 <section id="featured">
-  <div class="sec-label">🎬 Watch</div>
-  <div class="sec-title">Featured Video</div>
+  <div class="sec-lbl">🎬 Watch</div>
+  <div class="sec-ttl">Featured Video</div>
   <div class="vid-wrap">
-    <div class="vid-embed"><iframe id="featIframe" src="about:blank" allowfullscreen></iframe></div>
+    <div class="vid-frame"><iframe id="featFrame" src="about:blank" allowfullscreen></iframe></div>
     <div class="vid-info">
       <span class="vid-tag">⭐ FEATURED</span>
       <div class="vid-title" id="featTitle">Subscribe for Latest eFootball Content</div>
@@ -331,51 +357,53 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.6);border-top:1px soli
 
 <!-- SQUAD SHOWCASES -->
 <section id="squads">
-  <div class="sec-label">🏟️ Community</div>
-  <div class="sec-title">Squad Showcases</div>
+  <div class="sec-lbl">🏟️ Community</div>
+  <div class="sec-ttl">Squad Showcases</div>
   <div class="com-hdr">
-    <p style="color:rgba(234,234,234,.6);font-size:.85rem;font-family:'Rajdhani',sans-serif">Share your best squad builds!</p>
+    <p style="color:rgba(234,234,234,.6);font-size:.85rem;font-family:'Rajdhani',sans-serif">Share your best squad builds with the community!</p>
     <button class="btn-upload" onclick="openAdmin('squad')">+ Upload Your Squad</button>
   </div>
-  <div class="squad-grid" id="squadGrid"><div class="empty" style="grid-column:1/-1"><div class="empty-icon">⚽</div>Loading squads...</div></div>
+  <div class="squad-grid" id="squadGrid">
+    <div class="empty" style="grid-column:1/-1"><div class="empty-ico">⚽</div>Loading squads...</div>
+  </div>
 </section>
 <div class="neon-sep"></div>
 
 <!-- FOOTER -->
 <footer id="contact">
   <div class="foot-grid">
-    <div class="foot-about">
+    <div>
       <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem">
-        <svg width="36" height="36" viewBox="0 0 52 52" fill="none"><path d="M26 3L46 12L46 28C46 38 36 46 26 49C16 46 6 38 6 28L6 12Z" fill="#8A2BE2" opacity=".3" stroke="#00E5FF" stroke-width="1.5"/><text x="26" y="33" text-anchor="middle" font-family="Orbitron" font-size="18" font-weight="900" fill="#00E5FF">Y</text></svg>
-        <div><div style="font-family:'Orbitron',sans-serif;font-size:.9rem;color:#00E5FF;font-weight:700">YAMIN AHMED VLOG</div><div style="font-family:'Rajdhani',sans-serif;font-size:.65rem;color:#00FF6A;letter-spacing:2px">eFootball Community</div></div>
+        <svg width="36" height="36" viewBox="0 0 52 52" fill="none"><path d="M26 3L46 12L46 28C46 38 36 46 26 49C16 46 6 38 6 28L6 12Z" fill="#8A2BE2" opacity=".25" stroke="#00E5FF" stroke-width="1.5"/><text x="26" y="33" text-anchor="middle" font-family="Orbitron" font-size="18" font-weight="900" fill="#00E5FF">Y</text></svg>
+        <div><div style="font-family:'Orbitron',sans-serif;font-size:.88rem;color:#00E5FF;font-weight:700">YAMIN AHMED VLOG</div><div style="font-family:'Rajdhani',sans-serif;font-size:.63rem;color:#00FF6A;letter-spacing:2px">eFootball Community</div></div>
       </div>
-      <p>Your #1 destination for eFootball tips, meta guides, squad builds, and the latest patch notes.</p>
+      <p class="foot-p">Your #1 destination for eFootball tips, meta guides, squad builds, and the latest patch notes. Stay ahead of the competition.</p>
     </div>
     <div>
-      <div class="foot-title">QUICK LINKS</div>
-      <ul class="foot-links"><li><a href="#">News &amp; Patch Notes</a></li><li><a href="#">Player Build Guides</a></li><li><a href="#">Meta Playbook</a></li><li><a href="#">Coin &amp; GP Farming</a></li><li><a href="#">Tournament Hub</a></li></ul>
+      <div class="foot-h">QUICK LINKS</div>
+      <ul class="foot-ul"><li><a href="#">News &amp; Patch Notes</a></li><li><a href="#">Player Build Guides</a></li><li><a href="#">Meta Playbook</a></li><li><a href="#">Coin &amp; GP Farming</a></li><li><a href="#">Tournament Hub</a></li></ul>
     </div>
     <div>
-      <div class="foot-title">FOLLOW ME</div>
-      <ul class="foot-links"><li><a href="https://www.youtube.com/@YaminOfficial-iq3wp" target="_blank">▶ YouTube Channel</a></li><li><a href="#">📧 Contact Me</a></li></ul>
+      <div class="foot-h">FOLLOW ME</div>
+      <ul class="foot-ul"><li><a href="https://www.youtube.com/@YaminOfficial-iq3wp" target="_blank">▶ YouTube Channel</a></li><li><a href="#">📧 Contact Me</a></li></ul>
       <div style="margin-top:1.5rem"><a href="https://www.youtube.com/@YaminOfficial-iq3wp" target="_blank" class="btn-yt" style="display:inline-flex">Subscribe</a></div>
     </div>
   </div>
-  <div class="foot-bottom">© 2025 Yamin Ahmed Vlog. All Rights Reserved. Built with ⚡ for the eFootball Community.</div>
+  <div class="foot-copy">© 2025 Yamin Ahmed Vlog. All Rights Reserved. Built with ⚡ for the eFootball Community.</div>
 </footer>
 
 <!-- PASSWORD MODAL -->
 <div class="pw-ov" id="pwOv">
   <div class="pw-box">
-    <div class="pw-icon">🔐</div>
-    <div class="pw-title">ADMIN ACCESS</div>
+    <div class="pw-ico">🔐</div>
+    <div class="pw-ttl">ADMIN ACCESS</div>
     <div class="pw-sub">Enter your admin password</div>
-    <div class="pw-wrap">
-      <input class="pw-inp" type="password" id="pwInp" placeholder="••••••••" maxlength="20" onkeydown="if(event.key==='Enter')checkPw()">
+    <div class="pw-row">
+      <input class="pw-in" type="password" id="pwIn" placeholder="••••••••" maxlength="20" onkeydown="if(event.key==='Enter')doPw()">
       <button class="pw-eye" onclick="toggleEye()" id="pwEye">👁</button>
     </div>
     <div class="pw-err" id="pwErr"></div>
-    <button class="pw-go" onclick="checkPw()">UNLOCK ADMIN ⚡</button><br>
+    <button class="pw-btn" onclick="doPw()">UNLOCK ADMIN ⚡</button><br>
     <button class="pw-cancel" onclick="closePw()">✕ Cancel</button>
     <div class="pw-att" id="pwAtt"></div>
   </div>
@@ -396,53 +424,53 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.6);border-top:1px soli
 
       <!-- ADD POST -->
       <div class="tab on" id="tab-post">
-        <div class="fb-info">🔥 <strong>Images upload to Firebase Storage</strong> — once Firebase is connected, photos appear on ALL phones &amp; devices instantly.</div>
+        <div class="fb-info">🔥 <b>Images upload to Firebase Storage</b> — once Firebase is connected, photos appear on ALL phones &amp; devices instantly.</div>
         <div class="fg"><label>Category</label>
           <select id="pCat">
             <option>📰 News &amp; Patch Notes</option><option>⚡ Player Build Guides</option><option>📖 Meta Playbook</option><option>💎 F2P Hidden Gems</option><option>🧠 Manager Reviews</option><option>🎯 Skill Move Tutorial</option><option>🛡️ Defending Masterclass</option><option>👥 Squad Showcases</option><option>📈 Weekly Form Updates</option><option>🪙 Coin &amp; GP Farming</option><option>🤖 AI Creative Studio</option><option>⚖️ Comparison Tool</option><option>🔬 Formation Laboratory</option><option>📱 Mobile vs. Console</option><option>🏆 Tournament Hub</option>
           </select>
         </div>
         <div class="fg"><label>Post Title</label><input type="text" id="pTitle" placeholder="e.g. Best Meta Formation for Patch 4.5.0"></div>
-        <div class="fg"><label>Description</label><textarea id="pDesc" placeholder="Short summary..."></textarea></div>
+        <div class="fg"><label>Description</label><textarea id="pDesc" placeholder="Short summary of this post..."></textarea></div>
         <div class="fg2">
           <div class="fg"><label>Link (optional)</label><input type="url" id="pLink" placeholder="https://..."></div>
           <div class="fg"><label>Date</label><input type="date" id="pDate"></div>
         </div>
         <div class="fg">
-          <label>📸 Post Image — JPEG/PNG (shows on all devices when Firebase connected)</label>
-          <div class="img-drop" id="pDrop">
-            <input type="file" id="pImgFile" accept="image/jpeg,image/png,image/webp,image/gif" onchange="selImg(this,'p')">
-            <span class="up-icon">🖼️</span>
-            <div class="up-txt">Drag &amp; drop or <span>click to browse</span><br><small style="opacity:.5">JPEG · PNG · WebP — Max 5MB</small></div>
+          <label>📸 Post Image — JPEG/PNG (appears on all devices when Firebase is connected)</label>
+          <div class="img-drop" id="pDrop" ondragover="ev.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="dropImg(event,'p')">
+            <input type="file" id="pFile" accept="image/jpeg,image/png,image/webp,image/gif" onchange="pickImg(this,'p')">
+            <span class="up-ico">🖼️</span>
+            <div class="up-txt">Drag &amp; drop your image or <b>click to browse</b><br><small style="opacity:.5">JPEG · PNG · WebP · Max 5MB</small></div>
             <div class="prog-wrap" id="pProg"><div class="prog-bar" id="pBar"></div></div>
           </div>
-          <div class="prev-box" id="pPrev"><img id="pPrevImg" src="" alt=""><button class="rm-img" onclick="rmImg('p')">✕ Remove</button></div>
+          <div class="prev-box" id="pPrev"><img id="pPrevImg" src="" alt="Preview"><button class="rm-btn" onclick="rmImg('p')">✕ Remove</button></div>
         </div>
         <button class="btn-save" id="pBtn" onclick="addPost()">✚ PUBLISH POST</button>
       </div>
 
       <!-- ADD SQUAD -->
       <div class="tab" id="tab-squad">
-        <div class="fb-info">🔥 <strong>Squad screenshots upload to Firebase Storage</strong> — everyone on every device will see your squad photo.</div>
-        <div class="fg"><label>Squad Title</label><input type="text" id="sTitle" placeholder="e.g. Insane F2P La Liga Squad – 4-3-3"></div>
+        <div class="fb-info">🔥 <b>Squad screenshots upload to Firebase Storage</b> — your squad photo is visible to everyone on every device worldwide.</div>
+        <div class="fg"><label>Squad Name / Title</label><input type="text" id="sTitle" placeholder="e.g. Insane F2P La Liga Squad – 4-3-3"></div>
         <div class="fg"><label>Description</label><textarea id="sDesc" placeholder="Formation, key players, strategy..."></textarea></div>
         <div class="fg"><label>Submitted By</label><input type="text" id="sAuthor" placeholder="Your name / username"></div>
         <div class="fg">
           <label>📸 Squad Screenshot — JPEG/PNG</label>
-          <div class="img-drop" id="sDrop">
-            <input type="file" id="sImgFile" accept="image/jpeg,image/png,image/webp" onchange="selImg(this,'s')">
-            <span class="up-icon">📸</span>
-            <div class="up-txt">Upload your squad screenshot<br><span>click to browse</span><br><small style="opacity:.5">JPEG · PNG · WebP — Max 5MB</small></div>
+          <div class="img-drop" id="sDrop" ondragover="ev.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="dropImg(event,'s')">
+            <input type="file" id="sFile" accept="image/jpeg,image/png,image/webp" onchange="pickImg(this,'s')">
+            <span class="up-ico">📸</span>
+            <div class="up-txt">Upload your squad screenshot<br><b>click to browse</b><br><small style="opacity:.5">JPEG · PNG · WebP · Max 5MB</small></div>
             <div class="prog-wrap" id="sProg"><div class="prog-bar" id="sBar"></div></div>
           </div>
-          <div class="prev-box" id="sPrev"><img id="sPrevImg" src="" alt=""><button class="rm-img" onclick="rmImg('s')">✕ Remove</button></div>
+          <div class="prev-box" id="sPrev"><img id="sPrevImg" src="" alt="Preview"><button class="rm-btn" onclick="rmImg('s')">✕ Remove</button></div>
         </div>
         <button class="btn-save" id="sBtn" onclick="addSquad()">✚ SUBMIT SQUAD</button>
       </div>
 
       <!-- FEATURED VIDEO -->
       <div class="tab" id="tab-video">
-        <div class="fg"><label>YouTube Video ID or URL</label><input type="text" id="vUrl" placeholder="e.g. dQw4w9WgXcQ or full YouTube URL"></div>
+        <div class="fg"><label>YouTube Video ID or Full URL</label><input type="text" id="vUrl" placeholder="e.g. dQw4w9WgXcQ or full YouTube URL"></div>
         <div class="fg"><label>Video Title</label><input type="text" id="vTitle" placeholder="e.g. Ultimate eFootball Meta Guide 2025"></div>
         <div class="fg"><label>Video Description</label><textarea id="vDesc" placeholder="What does this video cover?"></textarea></div>
         <button class="btn-save" onclick="setVideo()">✚ SET FEATURED VIDEO</button>
@@ -450,42 +478,44 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.6);border-top:1px soli
 
       <!-- MANAGE -->
       <div class="tab" id="tab-manage">
-        <div style="font-family:'Rajdhani',sans-serif;font-size:.8rem;color:rgba(234,234,234,.5);margin-bottom:1rem;letter-spacing:1px">ALL POSTS</div>
-        <div id="mPosts"><div class="empty"><div class="empty-icon">📭</div>Loading...</div></div>
-        <div style="font-family:'Rajdhani',sans-serif;font-size:.8rem;color:rgba(234,234,234,.5);margin:2rem 0 1rem;letter-spacing:1px">SQUAD SHOWCASES</div>
-        <div id="mSquads"><div class="empty"><div class="empty-icon">⚽</div>Loading...</div></div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:.78rem;color:rgba(234,234,234,.45);margin-bottom:1rem;letter-spacing:1px;text-transform:uppercase">All Posts</div>
+        <div id="mPosts"><div class="empty"><div class="empty-ico">📭</div>Loading...</div></div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:.78rem;color:rgba(234,234,234,.45);margin:2rem 0 1rem;letter-spacing:1px;text-transform:uppercase">Squad Showcases</div>
+        <div id="mSquads"><div class="empty"><div class="empty-ico">⚽</div>Loading...</div></div>
       </div>
 
       <!-- FIREBASE SETUP -->
       <div class="tab" id="tab-firebase">
-        <div style="background:rgba(255,100,0,.08);border:1px solid rgba(255,160,0,.3);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem">
-          <div style="font-family:'Orbitron',sans-serif;font-size:.9rem;color:#ffb347;margin-bottom:1rem;letter-spacing:1px">🔥 HOW TO CONNECT FIREBASE (FREE — 5 MINS)</div>
-          <div style="font-family:'Rajdhani',sans-serif;font-size:.85rem;color:rgba(234,234,234,.8);line-height:2">
-            <b style="color:#00E5FF">Step 1</b> → Go to <a href="https://console.firebase.google.com" target="_blank" style="color:#00FF6A">console.firebase.google.com</a><br>
-            <b style="color:#00E5FF">Step 2</b> → <b>Add project</b> → name it <code style="background:rgba(255,255,255,.1);padding:.1rem .4rem;border-radius:3px">yamin-vlog</code> → Create<br>
-            <b style="color:#00E5FF">Step 3</b> → Click the <b>&lt;/&gt; Web</b> icon → Register app → <b>Copy the firebaseConfig</b><br>
-            <b style="color:#00E5FF">Step 4</b> → Paste the config in the box below → Click <b>Save &amp; Connect</b><br>
-            <b style="color:#00E5FF">Step 5</b> → Firebase console → <b>Build → Firestore Database</b> → Create → <b>Test mode</b><br>
-            <b style="color:#00E5FF">Step 6</b> → Firebase console → <b>Build → Storage</b> → Get started → <b>Test mode</b><br>
-            <b style="color:#00FF6A">✅ Done!</b> Images &amp; posts now sync to every phone &amp; device instantly!
+        <div class="fb-setup">
+          <div class="fb-setup-ttl">🔥 HOW TO CONNECT FIREBASE — FREE, 5 MINUTES</div>
+          <div class="fb-steps">
+            <b style="color:#00E5FF">Step 1</b> → Go to <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a><br>
+            <b style="color:#00E5FF">Step 2</b> → Click <b>Add project</b> → name it <code>yamin-vlog</code> → Create<br>
+            <b style="color:#00E5FF">Step 3</b> → Click the <b>&lt;/&gt; Web</b> icon → Register app → <b>Copy the firebaseConfig object</b><br>
+            <b style="color:#00E5FF">Step 4</b> → Paste it in the box below → click <b>Save &amp; Connect</b><br>
+            <b style="color:#00E5FF">Step 5</b> → Firebase console → <b>Build → Firestore Database</b> → Create → <b>Start in test mode</b><br>
+            <b style="color:#00E5FF">Step 6</b> → Firebase console → <b>Build → Storage</b> → Get started → <b>Start in test mode</b><br>
+            <b style="color:#00FF6A">✅ Done!</b> Images &amp; posts now appear on every phone &amp; device in real time!
           </div>
         </div>
         <div class="fg">
-          <label>Paste Your Firebase Config Object</label>
-          <textarea id="fbConfigInput" style="min-height:150px;font-family:monospace;font-size:.78rem" placeholder="Paste the firebaseConfig object here, e.g.:
+          <label>Paste Your Firebase Config Here</label>
+          <textarea id="fbCfgIn" style="min-height:145px;font-family:monospace;font-size:.78rem" placeholder='Paste the entire config object, e.g.:
 {
-  apiKey: &quot;AIza...&quot;,
-  authDomain: &quot;your-app.firebaseapp.com&quot;,
-  projectId: &quot;your-app&quot;,
-  storageBucket: &quot;your-app.appspot.com&quot;,
-  messagingSenderId: &quot;12345&quot;,
-  appId: &quot;1:12345:web:abc&quot;
-}"></textarea>
+  apiKey: "AIza...",
+  authDomain: "your-app.firebaseapp.com",
+  projectId: "your-app",
+  storageBucket: "your-app.appspot.com",
+  messagingSenderId: "123456",
+  appId: "1:123456:web:abc"
+}'></textarea>
         </div>
-        <button class="btn-save" onclick="saveFbConfig()">💾 SAVE &amp; CONNECT FIREBASE</button>
+        <button class="btn-save" onclick="saveFb()">💾 SAVE &amp; CONNECT FIREBASE</button>
         <div id="fbStatus" style="margin-top:1rem;font-family:'Rajdhani',sans-serif;font-size:.85rem"></div>
+        <div id="fbConnected" style="display:none;margin-top:1rem;background:rgba(0,255,106,.08);border:1px solid rgba(0,255,106,.3);border-radius:8px;padding:1rem;font-family:'Rajdhani',sans-serif;font-size:.85rem;color:var(--green)">
+          ✅ Firebase is connected! All posts and images are synced across every device.
+        </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -493,419 +523,470 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.6);border-top:1px soli
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- FIREBASE -->
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, orderBy, query, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
-
-window._fbInit = (config) => {
-  try {
-    const app = initializeApp(config);
-    const db = getFirestore(app);
-    const st = getStorage(app);
-    window._fb = { db, st, collection, addDoc, deleteDoc, doc, onSnapshot, orderBy, query, updateDoc, increment, ref, uploadBytesResumable, getDownloadURL, ready: true };
-    document.getElementById('setupBanner').classList.add('hidden');
-    window.dispatchEvent(new Event('fb-ready'));
-    return true;
-  } catch(e) { console.error(e); return false; }
-};
-
-// Try saved config
-const sc = localStorage.getItem('ymn_fb');
-if (sc) { try { window._fbInit(JSON.parse(sc)); } catch(e){} }
-else { window._fb = { ready: false }; window.dispatchEvent(new Event('fb-ready')); }
-</script>
-
 <script>
+// =============================================
+// FIREBASE — uses compat CDN loaded in <head>
+// Works 100% on GitHub Pages, no build tools
+// =============================================
+
+var db = null;
+var storage = null;
+var fbReady = false;
+
+function initFb(cfg) {
+  try {
+    // Prevent duplicate app error
+    if (firebase.apps.length > 0) {
+      firebase.apps.forEach(function(a){ try{ a.delete(); }catch(e){} });
+    }
+    firebase.initializeApp(cfg);
+    db = firebase.firestore();
+    storage = firebase.storage();
+    fbReady = true;
+    document.getElementById('banner').classList.add('hide');
+    document.getElementById('fbConnected').style.display = 'block';
+    startListeners();
+    return true;
+  } catch(e) {
+    console.error('Firebase init error:', e);
+    return false;
+  }
+}
+
+// Try loading saved config on page load
+window.addEventListener('load', function() {
+  var saved = localStorage.getItem('ymn_fb_cfg');
+  if (saved) {
+    try { initFb(JSON.parse(saved)); }
+    catch(e) { loadLocalFallback(); }
+  } else {
+    loadLocalFallback();
+  }
+});
+
+function loadLocalFallback() {
+  renderPosts(JSON.parse(localStorage.getItem('ymn_posts') || '[]'));
+  renderSquads(JSON.parse(localStorage.getItem('ymn_squads') || '[]'));
+}
+
+function startListeners() {
+  if (!fbReady) return;
+  // Real-time posts listener
+  db.collection('posts').orderBy('createdAt', 'desc').onSnapshot(function(snap) {
+    var posts = snap.docs.map(function(d) { return Object.assign({ id: d.id }, d.data()); });
+    renderPosts(posts);
+  });
+  // Real-time squads listener
+  db.collection('squads').orderBy('createdAt', 'desc').onSnapshot(function(snap) {
+    var squads = snap.docs.map(function(d) { return Object.assign({ id: d.id }, d.data()); });
+    renderSquads(squads);
+  });
+}
+
+// =============================================
 // PASSWORD
-const PW = 'EFB2026';
-let pwTries = 0, pwLock = false, pendTab = null;
+// =============================================
+var PASS = 'EFB2026';
+var pwTries = 0, pwLocked = false, pendingTab = null;
 
 function openAdmin(tab) {
-  pendTab = tab || null;
-  if (pwLock) { toast('⛔ Too many attempts. Wait 5 min.', true); return; }
-  document.getElementById('pwOv').classList.add('open');
-  document.getElementById('pwInp').value = '';
+  pendingTab = tab || null;
+  if (pwLocked) { showToast('⛔ Too many attempts. Wait 5 minutes.', 'err'); return; }
+  document.getElementById('pwOv').classList.add('on');
+  document.getElementById('pwIn').value = '';
   document.getElementById('pwErr').textContent = '';
   document.getElementById('pwAtt').textContent = '';
   document.body.style.overflow = 'hidden';
-  setTimeout(() => document.getElementById('pwInp').focus(), 100);
+  setTimeout(function(){ document.getElementById('pwIn').focus(); }, 100);
 }
 
-function checkPw() {
-  const v = document.getElementById('pwInp').value;
-  if (v === PW) {
-    pwTries = 0; closePw();
-    document.getElementById('admOv').classList.add('open');
+function doPw() {
+  var v = document.getElementById('pwIn').value;
+  if (v === PASS) {
+    pwTries = 0;
+    closePw();
+    document.getElementById('admOv').classList.add('on');
     document.body.style.overflow = 'hidden';
-    if (pendTab) swTab(pendTab);
-    if (pendTab === 'manage') loadManage();
+    if (pendingTab) swTab(pendingTab);
+    if (pendingTab === 'manage') loadManage();
   } else {
     pwTries++;
-    const inp = document.getElementById('pwInp');
-    inp.classList.add('err'); setTimeout(() => inp.classList.remove('err'), 400); inp.value = '';
+    var inp = document.getElementById('pwIn');
+    inp.classList.add('shake');
+    setTimeout(function(){ inp.classList.remove('shake'); }, 400);
+    inp.value = '';
     if (pwTries >= 5) {
-      pwLock = true;
-      document.getElementById('pwErr').textContent = '⛔ Locked! Try again in 5 minutes.';
-      setTimeout(() => { pwLock = false; pwTries = 0; }, 300000);
+      pwLocked = true;
+      document.getElementById('pwErr').textContent = '⛔ Locked. Wait 5 minutes.';
+      setTimeout(function(){ pwLocked = false; pwTries = 0; }, 300000);
       closePw(); document.body.style.overflow = '';
     } else {
-      const r = 5 - pwTries;
+      var rem = 5 - pwTries;
       document.getElementById('pwErr').textContent = '❌ Wrong password.';
-      document.getElementById('pwAtt').textContent = r + ' attempt' + (r !== 1 ? 's' : '') + ' remaining';
+      document.getElementById('pwAtt').textContent = rem + ' attempt' + (rem !== 1 ? 's' : '') + ' remaining';
     }
   }
 }
 
 function toggleEye() {
-  const i = document.getElementById('pwInp'), b = document.getElementById('pwEye');
+  var i = document.getElementById('pwIn'), b = document.getElementById('pwEye');
   i.type = i.type === 'password' ? 'text' : 'password';
   b.textContent = i.type === 'password' ? '👁' : '🙈';
 }
 
 function closePw() {
-  document.getElementById('pwOv').classList.remove('open');
-  if (!document.getElementById('admOv').classList.contains('open')) document.body.style.overflow = '';
+  document.getElementById('pwOv').classList.remove('on');
+  if (!document.getElementById('admOv').classList.contains('on')) document.body.style.overflow = '';
 }
 
 function closeAdm() {
-  document.getElementById('admOv').classList.remove('open');
+  document.getElementById('admOv').classList.remove('on');
   document.body.style.overflow = '';
 }
 
-document.getElementById('pwOv').addEventListener('click', e => { if (e.target.id === 'pwOv') closePw(); });
-document.getElementById('admOv').addEventListener('click', e => { if (e.target.id === 'admOv') closeAdm(); });
+document.getElementById('pwOv').addEventListener('click', function(e){ if(e.target.id==='pwOv') closePw(); });
+document.getElementById('admOv').addEventListener('click', function(e){ if(e.target.id==='admOv') closeAdm(); });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closePw(); closeAdm(); } });
 
 function swTab(name) {
-  const names = ['post','squad','video','manage','firebase'];
-  document.querySelectorAll('.adm-tab').forEach((t, i) => t.classList.toggle('on', names[i] === name));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
-  document.getElementById('tab-' + name).classList.add('on');
+  var names = ['post','squad','video','manage','firebase'];
+  document.querySelectorAll('.adm-tab').forEach(function(t,i){ t.classList.toggle('on', names[i]===name); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
+  document.getElementById('tab-'+name).classList.add('on');
   if (name === 'manage') loadManage();
+  if (name === 'firebase' && fbReady) document.getElementById('fbConnected').style.display = 'block';
 }
 
-// IMAGE SELECT
-const pImgs = { p: null, s: null };
+// =============================================
+// IMAGE HANDLING
+// =============================================
+var pendImgs = { p: null, s: null };
 
-function selImg(inp, k) {
-  const f = inp.files[0];
+function pickImg(input, k) {
+  var f = input.files[0];
   if (!f) return;
-  if (f.size > 5 * 1024 * 1024) { toast('❌ Image too large. Max 5MB', true); return; }
-  pImgs[k] = f;
-  const r = new FileReader();
-  r.onload = e => {
-    document.getElementById(k + 'PrevImg').src = e.target.result;
-    document.getElementById(k + 'Prev').classList.add('on');
+  if (f.size > 5 * 1024 * 1024) { showToast('❌ Image too large. Max 5MB.', 'err'); return; }
+  pendImgs[k] = f;
+  var r = new FileReader();
+  r.onload = function(e) {
+    document.getElementById(k+'PrevImg').src = e.target.result;
+    document.getElementById(k+'Prev').classList.add('on');
   };
   r.readAsDataURL(f);
 }
 
-function rmImg(k) {
-  pImgs[k] = null;
-  document.getElementById(k + 'Prev').classList.remove('on');
-  document.getElementById(k + 'PrevImg').src = '';
-  document.getElementById(k + 'ImgFile').value = '';
+function dropImg(ev, k) {
+  ev.preventDefault();
+  document.getElementById(k+'Drop').classList.remove('drag');
+  var f = ev.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) {
+    pendImgs[k] = f;
+    var r = new FileReader();
+    r.onload = function(e) {
+      document.getElementById(k+'PrevImg').src = e.target.result;
+      document.getElementById(k+'Prev').classList.add('on');
+    };
+    r.readAsDataURL(f);
+  }
 }
 
-// Drag and drop
-['p','s'].forEach(k => {
-  const z = document.getElementById(k + 'Drop');
-  if (!z) return;
-  z.addEventListener('dragover', e => { e.preventDefault(); z.classList.add('drag'); });
-  z.addEventListener('dragleave', () => z.classList.remove('drag'));
-  z.addEventListener('drop', e => {
-    e.preventDefault(); z.classList.remove('drag');
-    const f = e.dataTransfer.files[0];
-    if (f && f.type.startsWith('image/')) {
-      pImgs[k] = f;
-      const r = new FileReader();
-      r.onload = ev => { document.getElementById(k+'PrevImg').src = ev.target.result; document.getElementById(k+'Prev').classList.add('on'); };
-      r.readAsDataURL(f);
-    }
-  });
-});
+function rmImg(k) {
+  pendImgs[k] = null;
+  document.getElementById(k+'Prev').classList.remove('on');
+  document.getElementById(k+'PrevImg').src = '';
+  document.getElementById(k+'File').value = '';
+}
 
-async function uploadImg(file, path, barId, wrapId) {
-  const fb = window._fb;
-  if (!fb || !fb.ready) {
-    // Local base64 fallback
-    return new Promise(res => {
-      const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(file);
-    });
-  }
-  return new Promise((res, rej) => {
-    const storRef = fb.ref(fb.st, path);
-    const task = fb.uploadBytesResumable(storRef, file);
-    document.getElementById(wrapId).classList.add('on');
+function uploadImg(file, path, barId, progId) {
+  return new Promise(function(resolve, reject) {
+    if (!fbReady) {
+      // No Firebase — store as base64 (local only)
+      var r = new FileReader();
+      r.onload = function(e) { resolve(e.target.result); };
+      r.onerror = reject;
+      r.readAsDataURL(file);
+      return;
+    }
+    var ref = storage.ref(path);
+    var task = ref.put(file);
+    var wrap = document.getElementById(progId);
+    var bar = document.getElementById(barId);
+    if (wrap) wrap.classList.add('on');
     task.on('state_changed',
-      snap => { document.getElementById(barId).style.width = (snap.bytesTransferred / snap.totalBytes * 100) + '%'; },
-      err => { document.getElementById(wrapId).classList.remove('on'); rej(err); },
-      async () => {
-        document.getElementById(wrapId).classList.remove('on');
-        document.getElementById(barId).style.width = '0%';
-        res(await fb.getDownloadURL(task.snapshot.ref));
+      function(snap) { if(bar) bar.style.width = (snap.bytesTransferred/snap.totalBytes*100)+'%'; },
+      function(err) { if(wrap) wrap.classList.remove('on'); reject(err); },
+      function() {
+        if(wrap) wrap.classList.remove('on');
+        if(bar) bar.style.width = '0%';
+        task.snapshot.ref.getDownloadURL().then(resolve).catch(reject);
       }
     );
   });
 }
 
-function catIcon(cat) {
-  const m = {'News':'📰','Player Build':'⚡','Meta':'📖','F2P':'💎','Manager':'🧠','Skill':'🎯','Defending':'🛡️','Squad':'👥','Form':'📈','Coin':'🪙','AI':'🤖','Comparison':'⚖️','Formation':'🔬','Mobile':'📱','Tournament':'🏆'};
-  for (const k in m) { if (cat && cat.includes(k)) return m[k]; }
-  return '📄';
-}
-
+// =============================================
 // ADD POST
-async function addPost() {
-  const title = document.getElementById('pTitle').value.trim();
-  if (!title) { toast('❌ Enter a post title.', true); return; }
-  const btn = document.getElementById('pBtn');
+// =============================================
+function addPost() {
+  var title = document.getElementById('pTitle').value.trim();
+  if (!title) { showToast('❌ Please enter a post title.', 'err'); return; }
+  var btn = document.getElementById('pBtn');
   btn.disabled = true; btn.textContent = '⏳ Publishing...';
-  showSpin('UPLOADING IMAGE...');
-  try {
-    let imageUrl = null;
-    if (pImgs.p) {
-      const slug = title.replace(/\s+/g,'_').slice(0,30);
-      imageUrl = await uploadImg(pImgs.p, `posts/${slug}_${Date.now()}`, 'pBar', 'pProg');
-    }
-    const data = {
-      title,
+  showSpin('UPLOADING...');
+
+  var slug = title.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'').slice(0,30);
+  var imgPromise = pendImgs.p
+    ? uploadImg(pendImgs.p, 'posts/'+slug+'_'+Date.now(), 'pBar', 'pProg')
+    : Promise.resolve(null);
+
+  imgPromise.then(function(imageUrl) {
+    var data = {
+      title: title,
       category: document.getElementById('pCat').value,
       desc: document.getElementById('pDesc').value.trim(),
       link: document.getElementById('pLink').value.trim(),
       date: document.getElementById('pDate').value,
-      imageUrl,
-      createdAt: Date.now()
+      imageUrl: imageUrl,
+      createdAt: firebase ? firebase.firestore.FieldValue.serverTimestamp() : Date.now()
     };
-    const fb = window._fb;
-    if (fb && fb.ready) {
-      await fb.addDoc(fb.collection(fb.db, 'posts'), data);
-      toast('✅ Published! Visible on all devices!');
+    if (fbReady) {
+      return db.collection('posts').add(data).then(function() {
+        showToast('✅ Post published! Visible on all devices!', 'ok');
+      });
     } else {
-      const lp = JSON.parse(localStorage.getItem('ymn_posts') || '[]');
-      lp.push({ ...data, id: 'l' + Date.now() });
+      var lp = JSON.parse(localStorage.getItem('ymn_posts')||'[]');
+      data.createdAt = Date.now();
+      data.id = 'l'+Date.now();
+      lp.unshift(data);
       localStorage.setItem('ymn_posts', JSON.stringify(lp));
       renderPosts(lp);
-      toast('⚠️ Saved locally — connect Firebase for all devices.', true);
+      showToast('⚠️ Saved locally — connect Firebase so it shows on all devices.', 'warn');
     }
+  }).catch(function(e) {
+    showToast('❌ Error: '+e.message, 'err');
+  }).finally(function() {
+    hideSpin();
+    btn.disabled = false; btn.textContent = '✚ PUBLISH POST';
     document.getElementById('pTitle').value = '';
     document.getElementById('pDesc').value = '';
     document.getElementById('pLink').value = '';
     rmImg('p');
-  } catch(e) { toast('❌ ' + e.message, true); }
-  finally { hideSpin(); btn.disabled = false; btn.textContent = '✚ PUBLISH POST'; }
+  });
 }
 
+// =============================================
 // ADD SQUAD
-async function addSquad() {
-  const title = document.getElementById('sTitle').value.trim();
-  if (!title) { toast('❌ Enter a squad title.', true); return; }
-  const btn = document.getElementById('sBtn');
+// =============================================
+function addSquad() {
+  var title = document.getElementById('sTitle').value.trim();
+  if (!title) { showToast('❌ Please enter a squad title.', 'err'); return; }
+  var btn = document.getElementById('sBtn');
   btn.disabled = true; btn.textContent = '⏳ Submitting...';
   showSpin('UPLOADING SQUAD...');
-  try {
-    let imageUrl = null;
-    if (pImgs.s) {
-      const slug = title.replace(/\s+/g,'_').slice(0,30);
-      imageUrl = await uploadImg(pImgs.s, `squads/${slug}_${Date.now()}`, 'sBar', 'sProg');
-    }
-    const data = {
-      title,
+
+  var slug = title.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'').slice(0,30);
+  var imgPromise = pendImgs.s
+    ? uploadImg(pendImgs.s, 'squads/'+slug+'_'+Date.now(), 'sBar', 'sProg')
+    : Promise.resolve(null);
+
+  imgPromise.then(function(imageUrl) {
+    var data = {
+      title: title,
       desc: document.getElementById('sDesc').value.trim(),
       author: document.getElementById('sAuthor').value.trim(),
-      imageUrl,
+      imageUrl: imageUrl,
       votes: 0,
-      createdAt: Date.now()
+      createdAt: fbReady ? firebase.firestore.FieldValue.serverTimestamp() : Date.now()
     };
-    const fb = window._fb;
-    if (fb && fb.ready) {
-      await fb.addDoc(fb.collection(fb.db, 'squads'), data);
-      toast('✅ Squad submitted! Visible on all devices!');
+    if (fbReady) {
+      return db.collection('squads').add(data).then(function() {
+        showToast('✅ Squad submitted! Visible on all devices!', 'ok');
+      });
     } else {
-      const ls = JSON.parse(localStorage.getItem('ymn_squads') || '[]');
-      ls.push({ ...data, id: 'l' + Date.now() });
+      var ls = JSON.parse(localStorage.getItem('ymn_squads')||'[]');
+      data.createdAt = Date.now();
+      data.id = 'l'+Date.now();
+      ls.unshift(data);
       localStorage.setItem('ymn_squads', JSON.stringify(ls));
       renderSquads(ls);
-      toast('⚠️ Saved locally — connect Firebase for all devices.', true);
+      showToast('⚠️ Saved locally — connect Firebase so it shows on all devices.', 'warn');
     }
+  }).catch(function(e) {
+    showToast('❌ Error: '+e.message, 'err');
+  }).finally(function() {
+    hideSpin();
+    btn.disabled = false; btn.textContent = '✚ SUBMIT SQUAD';
     document.getElementById('sTitle').value = '';
     document.getElementById('sDesc').value = '';
     document.getElementById('sAuthor').value = '';
     rmImg('s');
-  } catch(e) { toast('❌ ' + e.message, true); }
-  finally { hideSpin(); btn.disabled = false; btn.textContent = '✚ SUBMIT SQUAD'; }
+  });
 }
 
+// =============================================
 // DELETE
-async function delPost(id) {
+// =============================================
+function delPost(id) {
   if (!confirm('Delete this post?')) return;
-  const fb = window._fb;
-  if (fb && fb.ready) { await fb.deleteDoc(fb.doc(fb.db,'posts',id)); toast('🗑️ Deleted.'); }
-  else {
-    let lp = JSON.parse(localStorage.getItem('ymn_posts')||'[]');
-    lp = lp.filter(p => p.id !== id);
+  if (fbReady) {
+    db.collection('posts').doc(id).delete().then(function(){ showToast('🗑️ Post deleted.', 'ok'); loadManage(); });
+  } else {
+    var lp = JSON.parse(localStorage.getItem('ymn_posts')||'[]').filter(function(p){ return p.id !== id; });
     localStorage.setItem('ymn_posts', JSON.stringify(lp));
-    renderPosts(lp); loadManage(); toast('🗑️ Deleted.');
+    renderPosts(lp); loadManage(); showToast('🗑️ Deleted.', 'ok');
   }
 }
 
-async function delSquad(id) {
+function delSquad(id) {
   if (!confirm('Delete this squad?')) return;
-  const fb = window._fb;
-  if (fb && fb.ready) { await fb.deleteDoc(fb.doc(fb.db,'squads',id)); toast('🗑️ Deleted.'); }
-  else {
-    let ls = JSON.parse(localStorage.getItem('ymn_squads')||'[]');
-    ls = ls.filter(s => s.id !== id);
+  if (fbReady) {
+    db.collection('squads').doc(id).delete().then(function(){ showToast('🗑️ Squad deleted.', 'ok'); loadManage(); });
+  } else {
+    var ls = JSON.parse(localStorage.getItem('ymn_squads')||'[]').filter(function(s){ return s.id !== id; });
     localStorage.setItem('ymn_squads', JSON.stringify(ls));
-    renderSquads(ls); loadManage(); toast('🗑️ Deleted.');
+    renderSquads(ls); loadManage(); showToast('🗑️ Deleted.', 'ok');
   }
 }
 
+// =============================================
 // UPVOTE
-async function upvote(id, btn) {
-  const key = 'uv_' + id;
-  if (localStorage.getItem(key)) { toast('You already upvoted!', true); return; }
+// =============================================
+function upvote(id, btn) {
+  var key = 'uv_'+id;
+  if (localStorage.getItem(key)) { showToast('You already upvoted this!', 'warn'); return; }
   localStorage.setItem(key, '1');
-  btn.classList.add('active');
-  const el = document.getElementById('vc_' + id);
-  if (el) el.textContent = parseInt(el.textContent || 0) + 1;
-  const fb = window._fb;
-  if (fb && fb.ready) {
-    try { await fb.updateDoc(fb.doc(fb.db,'squads',id), { votes: fb.increment(1) }); } catch(e){}
+  btn.classList.add('voted');
+  var el = document.getElementById('vc_'+id);
+  if (el) el.textContent = parseInt(el.textContent||0)+1;
+  if (fbReady) {
+    db.collection('squads').doc(id).update({ votes: firebase.firestore.FieldValue.increment(1) });
   }
 }
 
+// =============================================
 // FEATURED VIDEO
+// =============================================
 function setVideo() {
-  let url = document.getElementById('vUrl').value.trim();
-  const title = document.getElementById('vTitle').value.trim();
-  const desc = document.getElementById('vDesc').value.trim();
-  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
-  const vid = m ? m[1] : url;
-  document.getElementById('featIframe').src = 'https://www.youtube.com/embed/' + vid;
+  var url = document.getElementById('vUrl').value.trim();
+  var title = document.getElementById('vTitle').value.trim();
+  var desc = document.getElementById('vDesc').value.trim();
+  var m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+  var vid = m ? m[1] : url;
+  document.getElementById('featFrame').src = 'https://www.youtube.com/embed/'+vid+'?rel=0';
   if (title) document.getElementById('featTitle').textContent = title;
   if (desc) document.getElementById('featDesc').textContent = desc;
-  localStorage.setItem('ymn_feat', JSON.stringify({ vid, title, desc }));
-  toast('✅ Featured video updated!');
+  localStorage.setItem('ymn_feat', JSON.stringify({ vid:vid, title:title, desc:desc }));
+  showToast('✅ Featured video updated!', 'ok');
 }
 
-const sf = localStorage.getItem('ymn_feat');
-if (sf) { try { const f = JSON.parse(sf); if (f.vid) { document.getElementById('featIframe').src = 'https://www.youtube.com/embed/'+f.vid; if(f.title) document.getElementById('featTitle').textContent=f.title; if(f.desc) document.getElementById('featDesc').textContent=f.desc; } } catch(e){} }
+// Load saved featured video
+(function(){
+  var f = localStorage.getItem('ymn_feat');
+  if (f) { try { var d=JSON.parse(f); if(d.vid){document.getElementById('featFrame').src='https://www.youtube.com/embed/'+d.vid+'?rel=0';} if(d.title)document.getElementById('featTitle').textContent=d.title; if(d.desc)document.getElementById('featDesc').textContent=d.desc; }catch(e){} }
+})();
 
+// =============================================
 // FIREBASE CONFIG SAVE
-function saveFbConfig() {
-  const raw = document.getElementById('fbConfigInput').value.trim();
-  const st = document.getElementById('fbStatus');
+// =============================================
+function saveFb() {
+  var raw = document.getElementById('fbCfgIn').value.trim();
+  var st = document.getElementById('fbStatus');
   try {
-    let s = raw.replace(/^\s*\{/, '{').replace(/\}\s*$/, '}');
+    var s = raw;
+    // Handle JS object literal syntax
     s = s.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":');
     s = s.replace(/:\s*'([^']*)'/g, ':"$1"');
     s = s.replace(/,(\s*[}\]])/g, '$1');
-    const cfg = JSON.parse(s);
-    if (!cfg.apiKey || !cfg.projectId) { st.innerHTML = '<span style="color:var(--pink)">❌ Missing apiKey or projectId</span>'; return; }
-    localStorage.setItem('ymn_fb', JSON.stringify(cfg));
-    const ok = window._fbInit(cfg);
-    if (ok) { st.innerHTML = '<span style="color:var(--green)">✅ Connected! Reloading...</span>'; setTimeout(() => location.reload(), 1500); }
-    else { st.innerHTML = '<span style="color:var(--pink)">❌ Could not connect. Check your config.</span>'; }
-  } catch(e) { st.innerHTML = '<span style="color:var(--pink)">❌ Parse error: ' + e.message + '</span>'; }
-}
-
-// RENDER POSTS
-function renderPosts(posts) {
-  const g = document.getElementById('postsGrid');
-  document.getElementById('postCount').textContent = posts.length;
-  if (!posts.length) { g.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📭</div>No posts yet — open Admin Panel to add!</div>'; return; }
-  g.innerHTML = posts.map(p => {
-    const img = p.imageUrl
-      ? `<div class="card-img-wrap"><img src="${p.imageUrl}" alt="" loading="lazy"><span class="card-tag">${p.category}</span></div>`
-      : `<div class="card-placeholder">${catIcon(p.category)}<span class="card-tag">${p.category}</span></div>`;
-    const href = p.link ? `href="${p.link}" target="_blank"` : 'href="#"';
-    return `<a ${href} class="post-card">${img}<div class="card-body"><div class="card-title">${p.title}</div><div class="card-desc">${p.desc||''}</div><div class="card-meta"><span>${p.date||''}</span><span style="color:#00E5FF">→ Read More</span></div></div></a>`;
-  }).join('');
-}
-
-// RENDER SQUADS
-function renderSquads(squads) {
-  const g = document.getElementById('squadGrid');
-  document.getElementById('squadCount').textContent = squads.length;
-  if (!squads.length) { g.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">⚽</div>No squads yet — be the first!</div>'; return; }
-  g.innerHTML = squads.map(s => {
-    const img = s.imageUrl
-      ? `<div class="squad-img"><img src="${s.imageUrl}" alt="" loading="lazy"></div>`
-      : `<div class="squad-img">⚽</div>`;
-    return `<div class="squad-card">${img}<div class="squad-body"><div class="squad-title">${s.title}</div><div style="font-size:.75rem;color:rgba(234,234,234,.5);font-family:'Rajdhani',sans-serif;margin-bottom:.5rem">by ${s.author||'Anonymous'}</div><div style="font-size:.78rem;color:rgba(234,234,234,.6);margin-bottom:.8rem">${s.desc||''}</div><div class="upvote-row"><button class="upvote-btn" onclick="upvote('${s.id}',this)">▲ Upvote</button><span class="upvote-ct" id="vc_${s.id}">${s.votes||0}</span></div></div></div>`;
-  }).join('');
-}
-
-// MANAGE TAB
-function loadManage() {
-  const fb = window._fb;
-  if (fb && fb.ready) {
-    fb.getDocs ? null : null; // handled by listeners
-    // Re-fetch for manage tab
-    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(({ getDocs }) => {
-      getDocs(fb.query(fb.collection(fb.db,'posts'), fb.orderBy('createdAt','desc'))).then(snap => {
-        const posts = snap.docs.map(d => ({id:d.id,...d.data()}));
-        renderManageList('mPosts', posts, 'post');
-      });
-      getDocs(fb.query(fb.collection(fb.db,'squads'), fb.orderBy('createdAt','desc'))).then(snap => {
-        const squads = snap.docs.map(d => ({id:d.id,...d.data()}));
-        renderManageList('mSquads', squads, 'squad');
-      });
-    });
-  } else {
-    const lp = JSON.parse(localStorage.getItem('ymn_posts')||'[]');
-    const ls = JSON.parse(localStorage.getItem('ymn_squads')||'[]');
-    renderManageList('mPosts', lp, 'post');
-    renderManageList('mSquads', ls, 'squad');
+    var cfg = JSON.parse(s);
+    if (!cfg.apiKey || !cfg.projectId) { st.innerHTML='<span style="color:var(--pink)">❌ Missing apiKey or projectId. Check your config.</span>'; return; }
+    localStorage.setItem('ymn_fb_cfg', JSON.stringify(cfg));
+    var ok = initFb(cfg);
+    if (ok) { st.innerHTML='<span style="color:var(--green)">✅ Connected! Reloading in 2 seconds...</span>'; setTimeout(function(){ location.reload(); }, 2000); }
+    else { st.innerHTML='<span style="color:var(--pink)">❌ Could not connect. Make sure your Firebase project exists and config is correct.</span>'; }
+  } catch(e) {
+    st.innerHTML='<span style="color:var(--pink)">❌ Could not read config: '+e.message+'. Make sure you copied the entire { } object.</span>';
   }
 }
 
-function renderManageList(elId, items, type) {
-  const el = document.getElementById(elId);
-  if (!items.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">' + (type==='post'?'📭':'⚽') + '</div>None yet</div>'; return; }
-  const delFn = type === 'post' ? 'delPost' : 'delSquad';
-  el.innerHTML = items.map(item => `
-    <div class="adm-item">
-      <div class="adm-thumb">${item.imageUrl ? `<img src="${item.imageUrl}">` : (type==='post' ? catIcon(item.category) : '⚽')}</div>
-      <div class="adm-info"><div class="adm-ititle">${item.title}</div><div class="adm-icat">${type==='post'?(item.category+' · '+(item.date||'')):'by '+(item.author||'Anon')+' · '+(item.votes||0)+' votes'}</div></div>
-      <button class="btn-del" onclick="${delFn}('${item.id}')">✕ Delete</button>
-    </div>`).join('');
+// =============================================
+// RENDER
+// =============================================
+function catEmoji(cat) {
+  var map = {'News':'📰','Player':'⚡','Meta':'📖','F2P':'💎','Manager':'🧠','Skill':'🎯','Defend':'🛡️','Squad':'👥','Form':'📈','Coin':'🪙','AI':'🤖','Compar':'⚖️','Forma':'🔬','Mobile':'📱','Tourna':'🏆'};
+  if (!cat) return '📄';
+  for (var k in map) { if (cat.indexOf(k) !== -1) return map[k]; }
+  return '📄';
 }
 
-// SPINNER
-function showSpin(t) { document.getElementById('spinTxt').textContent = t||'LOADING...'; document.getElementById('spinner').classList.add('on'); }
+function renderPosts(posts) {
+  var g = document.getElementById('postsGrid');
+  document.getElementById('postCt').textContent = posts.length;
+  if (!posts.length) { g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">📭</div>No posts yet — open Admin to add!</div>'; return; }
+  g.innerHTML = posts.map(function(p) {
+    var imgH = p.imageUrl
+      ? '<div class="card-img-wrap"><img src="'+p.imageUrl+'" alt="" loading="lazy"><span class="card-tag">'+p.category+'</span></div>'
+      : '<div class="card-img-wrap"><span class="card-emoji">'+catEmoji(p.category)+'</span><span class="card-tag">'+p.category+'</span></div>';
+    var href = p.link ? 'href="'+p.link+'" target="_blank"' : 'href="#"';
+    return '<a '+href+' class="post-card">'+imgH+'<div class="card-body"><div class="card-title">'+p.title+'</div><div class="card-desc">'+(p.desc||'')+'</div><div class="card-meta"><span>'+(p.date||'')+'</span><span style="color:var(--neon)">→ Read More</span></div></div></a>';
+  }).join('');
+}
+
+function renderSquads(squads) {
+  var g = document.getElementById('squadGrid');
+  document.getElementById('squadCt').textContent = squads.length;
+  if (!squads.length) { g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">⚽</div>No squads yet — be the first!</div>'; return; }
+  g.innerHTML = squads.map(function(s) {
+    var imgH = s.imageUrl
+      ? '<div class="sq-img"><img src="'+s.imageUrl+'" alt="" loading="lazy"></div>'
+      : '<div class="sq-img" style="font-size:2.5rem">⚽</div>';
+    return '<div class="squad-card">'+imgH+'<div class="sq-body"><div class="sq-title">'+s.title+'</div><div class="sq-author">by '+(s.author||'Anonymous')+'</div><div class="sq-desc">'+(s.desc||'')+'</div><div class="uprow"><button class="up-btn" onclick="upvote(\''+s.id+'\',this)">▲ Upvote</button><span class="up-ct" id="vc_'+s.id+'">'+(s.votes||0)+'</span></div></div></div>';
+  }).join('');
+}
+
+function loadManage() {
+  if (fbReady) {
+    db.collection('posts').orderBy('createdAt','desc').get().then(function(snap) {
+      var items = snap.docs.map(function(d){ return Object.assign({id:d.id},d.data()); });
+      renderMgList('mPosts', items, 'post');
+    });
+    db.collection('squads').orderBy('createdAt','desc').get().then(function(snap) {
+      var items = snap.docs.map(function(d){ return Object.assign({id:d.id},d.data()); });
+      renderMgList('mSquads', items, 'squad');
+    });
+  } else {
+    renderMgList('mPosts', JSON.parse(localStorage.getItem('ymn_posts')||'[]'), 'post');
+    renderMgList('mSquads', JSON.parse(localStorage.getItem('ymn_squads')||'[]'), 'squad');
+  }
+}
+
+function renderMgList(elId, items, type) {
+  var el = document.getElementById(elId);
+  if (!items.length) { el.innerHTML='<div class="empty"><div class="empty-ico">'+(type==='post'?'📭':'⚽')+'</div>None yet</div>'; return; }
+  el.innerHTML = items.map(function(item) {
+    var thumb = item.imageUrl ? '<img src="'+item.imageUrl+'">' : (type==='post' ? catEmoji(item.category) : '⚽');
+    var meta = type==='post' ? (item.category+' &middot; '+(item.date||'')) : ('by '+(item.author||'Anon')+' &middot; '+(item.votes||0)+' votes');
+    var fn = type==='post' ? 'delPost' : 'delSquad';
+    return '<div class="m-item"><div class="m-thumb">'+thumb+'</div><div class="m-info"><div class="m-ttl">'+item.title+'</div><div class="m-cat">'+meta+'</div></div><button class="btn-del" onclick="'+fn+'(\''+item.id+'\')">✕ Delete</button></div>';
+  }).join('');
+}
+
+// =============================================
+// UTILS
+// =============================================
+function showSpin(t) { document.getElementById('spinTxt').textContent=t||'LOADING...'; document.getElementById('spinner').classList.add('on'); }
 function hideSpin() { document.getElementById('spinner').classList.remove('on'); }
 
-// TOAST
-let toastT;
-function toast(msg, red) {
-  const el = document.getElementById('toast');
+var toastTimer;
+function showToast(msg, type) {
+  var el = document.getElementById('toast');
   el.textContent = msg;
-  el.classList.toggle('red', !!red);
-  el.classList.add('on');
-  clearTimeout(toastT);
-  toastT = setTimeout(() => el.classList.remove('on'), 4000);
+  el.className = 'toast on ' + (type||'ok');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('on'); }, 4000);
 }
 
-// INIT
+// Default date
 document.getElementById('pDate').valueAsDate = new Date();
-
-window.addEventListener('fb-ready', () => {
-  const fb = window._fb;
-  if (fb && fb.ready) {
-    fb.onSnapshot(fb.query(fb.collection(fb.db,'posts'), fb.orderBy('createdAt','desc')), snap => {
-      renderPosts(snap.docs.map(d => ({id:d.id,...d.data()})));
-    });
-    fb.onSnapshot(fb.query(fb.collection(fb.db,'squads'), fb.orderBy('createdAt','desc')), snap => {
-      renderSquads(snap.docs.map(d => ({id:d.id,...d.data()})));
-    });
-  } else {
-    renderPosts(JSON.parse(localStorage.getItem('ymn_posts')||'[]'));
-    renderSquads(JSON.parse(localStorage.getItem('ymn_squads')||'[]'));
-  }
-}, { once: true });
 </script>
 </body>
 </html>
