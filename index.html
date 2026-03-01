@@ -36,6 +36,27 @@ header{position:sticky;top:0;z-index:1000;background:rgba(10,10,10,.93);backdrop
 .btn-yt:hover{transform:translateY(-2px);box-shadow:0 0 32px rgba(255,0,119,.65)}
 .btn-admin{background:transparent;border:1px solid var(--green);color:var(--green);padding:.48rem .95rem;border-radius:6px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:1px;transition:all .3s}
 .btn-admin:hover{background:var(--green);color:#000}
+.btn-supa{background:transparent;border:1px solid #3ecf8e;color:#3ecf8e;padding:.48rem .95rem;border-radius:6px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:1px;transition:all .3s;display:flex;align-items:center;gap:.35rem}
+.btn-supa:hover{background:#3ecf8e;color:#000}
+.btn-supa.connected{border-color:#00FF6A;color:#00FF6A}
+.btn-supa.connected:hover{background:#00FF6A;color:#000}
+
+/* SUPABASE STANDALONE MODAL */
+.sb-ov{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:7000;display:none;align-items:center;justify-content:center;padding:1rem}
+.sb-ov.on{display:flex}
+.sb-modal{background:#0a001e;border:1px solid #3ecf8e;border-radius:16px;padding:2rem;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 0 60px rgba(62,207,142,.25);animation:drop .28s ease}
+.sb-modal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4rem}
+.sb-modal-ttl{font-family:'Orbitron',sans-serif;font-size:1rem;color:#3ecf8e;letter-spacing:2px}
+.sb-modal-x{background:rgba(255,255,255,.08);border:none;color:#fff;width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:1rem}
+.sb-modal-x:hover{background:var(--pink)}
+.sb-steps{background:rgba(62,207,142,.05);border:1px solid rgba(62,207,142,.2);border-radius:10px;padding:1.1rem;margin-bottom:1.3rem;font-family:'Rajdhani',sans-serif;font-size:.83rem;color:rgba(234,234,234,.78);line-height:2.1}
+.sb-steps a{color:var(--neon)}
+.sb-steps code{background:rgba(255,255,255,.1);padding:.1rem .38rem;border-radius:3px;font-size:.78rem;color:#ffb347}
+.sb-sql-box{background:rgba(0,0,0,.5);border:1px solid rgba(0,229,255,.18);border-radius:8px;padding:.9rem;margin-bottom:1.2rem}
+.sb-sql-lbl{font-family:'Rajdhani',sans-serif;font-size:.7rem;color:var(--green);letter-spacing:2px;margin-bottom:.5rem;text-transform:uppercase}
+.sb-sql-box pre{font-family:monospace;font-size:.72rem;color:#bbb;overflow-x:auto;line-height:1.65;white-space:pre-wrap;max-height:160px;overflow-y:auto}
+.copy-sql-btn{margin-top:.5rem;background:transparent;border:1px solid var(--neon);color:var(--neon);padding:.25rem .7rem;border-radius:4px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.7rem}
+.copy-sql-btn:hover{background:var(--neon);color:#000}
 .nav-scroll{overflow-x:auto;scrollbar-width:none;padding:.4rem 2rem;border-top:1px solid rgba(255,255,255,.05)}
 .nav-scroll::-webkit-scrollbar{display:none}
 .nav-links{display:flex;gap:.25rem;width:max-content}
@@ -296,6 +317,7 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.65);border-top:1px sol
       <div><div class="logo-main">YAMIN AHMED</div><div class="logo-sub">eFootball Vlog</div></div>
     </a>
     <div class="nav-right">
+      <button class="btn-supa" id="supaBtn" onclick="openSupaModal()">🟢 CONNECT DB</button>
       <button class="btn-admin" onclick="openAdmin()">⚙ ADMIN</button>
       <a href="https://www.youtube.com/@YaminOfficial-iq3wp" target="_blank" class="btn-yt">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.3 5 12 5 12 5s-4.3 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.3.9C7 19 12 19 12 19s4.3 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM10 14.5v-5l5.5 2.5L10 14.5z"/></svg>
@@ -408,6 +430,66 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.65);border-top:1px sol
   </div>
   <div class="foot-copy">© 2025 Yamin Ahmed Vlog. All Rights Reserved. Built with ⚡ for the eFootball Community.</div>
 </footer>
+
+<!-- SUPABASE STANDALONE MODAL -->
+<div class="sb-ov" id="sbOv">
+  <div class="sb-modal">
+    <div class="sb-modal-hdr">
+      <div class="sb-modal-ttl">🟢 CONNECT SUPABASE</div>
+      <button class="sb-modal-x" onclick="closeSupaModal()">✕</button>
+    </div>
+
+    <div class="sb-steps">
+      <b style="color:#3ecf8e">Step 1</b> → Go to <a href="https://supabase.com" target="_blank">supabase.com</a> → sign in with GitHub → <b>New project</b> → name it <code>yamin-vlog</code><br>
+      <b style="color:#3ecf8e">Step 2</b> → Go to <b>Settings → API</b> → copy <b>Project URL</b> and <b>anon public key</b><br>
+      <b style="color:#3ecf8e">Step 3</b> → Paste both below → click <b>Save &amp; Connect</b><br>
+      <b style="color:#3ecf8e">Step 4</b> → In Supabase go to <b>SQL Editor → New query</b> → paste the SQL below → click <b>Run</b><br>
+      <b style="color:#3ecf8e">Step 5</b> → Go to <b>Storage → New bucket</b> → name <code>images</code> → tick <b>Public</b> → Create<br>
+      <b style="color:#00FF6A">✅ Done!</b> Posts and images will show on every device in real time!
+    </div>
+
+    <div class="sb-sql-box">
+      <div class="sb-sql-lbl">📋 Run this SQL in Supabase → SQL Editor → New Query</div>
+      <pre id="sqlBlock">CREATE TABLE IF NOT EXISTS posts (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  title text NOT NULL,
+  category text,
+  description text,
+  link text,
+  date text,
+  image_url text,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS squads (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  title text NOT NULL,
+  description text,
+  author text,
+  image_url text,
+  votes integer DEFAULT 0,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE posts  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE squads ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public read posts"    ON posts  FOR SELECT USING (true);
+CREATE POLICY "Public insert posts"  ON posts  FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public delete posts"  ON posts  FOR DELETE USING (true);
+CREATE POLICY "Public read squads"   ON squads FOR SELECT USING (true);
+CREATE POLICY "Public insert squads" ON squads FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public delete squads" ON squads FOR DELETE USING (true);
+CREATE POLICY "Public update squads" ON squads FOR UPDATE USING (true);</pre>
+      <button class="copy-sql-btn" onclick="copySQL()">📋 COPY SQL</button>
+    </div>
+
+    <div class="fg"><label>Supabase Project URL</label><input type="text" id="sbUrl2" placeholder="https://xxxxxxxxxxx.supabase.co"></div>
+    <div class="fg"><label>Supabase Anon Public Key</label><input type="text" id="sbKey2" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."></div>
+    <button class="btn-save" style="width:100%;margin-top:.2rem" onclick="saveSupaFromModal()">🟢 SAVE &amp; CONNECT SUPABASE</button>
+    <div class="sb-box" id="sbModalStatus" style="margin-top:.9rem"></div>
+  </div>
+</div>
 
 <!-- PASSWORD MODAL -->
 <div class="pw-ov" id="pwOv">
@@ -995,8 +1077,89 @@ function setVideo() {
 })();
 
 // ================================================================
-//  SAVE SUPABASE CONFIG
+//  SUPABASE STANDALONE MODAL
 // ================================================================
+function openSupaModal() {
+  document.getElementById('sbOv').classList.add('on');
+  document.body.style.overflow = 'hidden';
+  // Pre-fill if already saved
+  if (SB.ready) {
+    document.getElementById('sbUrl2').value = SB.url;
+    document.getElementById('sbKey2').value = SB.key;
+    var sb = document.getElementById('sbModalStatus');
+    sb.textContent = '✅ Already connected! You can update credentials here if needed.';
+    sb.className = 'sb-box ok';
+  }
+}
+
+function closeSupaModal() {
+  document.getElementById('sbOv').classList.remove('on');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('sbOv').addEventListener('click', function(e){ if(e.target.id==='sbOv') closeSupaModal(); });
+
+function saveSupaFromModal() {
+  var url = document.getElementById('sbUrl2').value.trim().replace(/\/$/, '');
+  var key = document.getElementById('sbKey2').value.trim();
+  var sb  = document.getElementById('sbModalStatus');
+
+  if (!url || !url.startsWith('https://')) {
+    sb.textContent = '❌ Invalid URL. Must start with https:// (e.g. https://xxxx.supabase.co)';
+    sb.className = 'sb-box err'; return;
+  }
+  if (!key || key.length < 20) {
+    sb.textContent = '❌ Invalid API key. Copy the full anon public key from Supabase → Settings → API.';
+    sb.className = 'sb-box err'; return;
+  }
+
+  sb.textContent = '⏳ Testing connection...';
+  sb.className = 'sb-box info';
+
+  fetch(url + '/rest/v1/posts?select=id&limit=1', {
+    headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+  }).then(function(r) {
+    if (r.ok || r.status === 406 || r.status === 200) {
+      localStorage.setItem('ymn_sb', JSON.stringify({ url: url, key: key }));
+      SB.url = url; SB.key = key; SB.ready = true;
+      document.getElementById('banner').classList.add('hide');
+      updateSupaBtn(true);
+      sb.textContent = '✅ Supabase connected successfully! Reloading in 2 seconds...';
+      sb.className = 'sb-box ok';
+      setTimeout(function(){ location.reload(); }, 2000);
+    } else if (r.status === 404 || r.status === 400) {
+      // Credentials valid but tables missing
+      localStorage.setItem('ymn_sb', JSON.stringify({ url: url, key: key }));
+      SB.url = url; SB.key = key; SB.ready = true;
+      updateSupaBtn(true);
+      document.getElementById('banner').classList.add('hide');
+      sb.textContent = '⚠️ Connected! But tables not found yet — make sure you ran the SQL in Supabase SQL Editor. Then reload the page.';
+      sb.className = 'sb-box err';
+    } else {
+      sb.textContent = '❌ Connection failed (HTTP ' + r.status + '). Check your URL and API key are correct.';
+      sb.className = 'sb-box err';
+    }
+  }).catch(function() {
+    sb.textContent = '❌ Could not reach Supabase. Check your Project URL is correct.';
+    sb.className = 'sb-box err';
+  });
+}
+
+function updateSupaBtn(connected) {
+  var btn = document.getElementById('supaBtn');
+  if (connected) {
+    btn.textContent = '🟢 DB CONNECTED';
+    btn.classList.add('connected');
+  } else {
+    btn.innerHTML = '🟢 CONNECT DB';
+    btn.classList.remove('connected');
+  }
+}
+
+// Set button state on load
+if (SB.ready) updateSupaBtn(true);
+
+
 function saveSupa() {
   var url = document.getElementById('sbUrl').value.trim().replace(/\/$/, '');
   var key = document.getElementById('sbKey').value.trim();
@@ -1039,13 +1202,12 @@ function saveSupa() {
   });
 }
 
-// Copy SQL helper
 function copySQL() {
-  var sql = document.querySelector('pre').textContent;
+  var sql = document.getElementById('sqlBlock').textContent;
   navigator.clipboard.writeText(sql).then(function(){
-    toast('📋 SQL copied! Paste in Supabase → SQL Editor', 'ok');
+    toast('📋 SQL copied! Paste in Supabase → SQL Editor → Run', 'ok');
   }).catch(function(){
-    toast('Select the SQL text and copy manually.', 'warn');
+    toast('Select the SQL text manually and copy it.', 'warn');
   });
 }
 
