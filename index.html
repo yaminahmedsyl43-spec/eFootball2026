@@ -156,10 +156,43 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.65);border-top:1px sol
 .adm-x:hover{background:var(--pink)}
 .adm-body{padding:1.8rem}
 
-/* ADMIN TABS */
-.adm-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.8rem;border-bottom:1px solid var(--border);padding-bottom:.9rem}
-.adm-tab{background:transparent;border:1px solid var(--border);color:rgba(234,234,234,.52);padding:.38rem .82rem;border-radius:6px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:.73rem;letter-spacing:.5px;transition:all .2s;text-transform:uppercase}
+/* ============================================================
+   ADMIN TABS — FIXED: scrollable so Firebase tab always shows
+   ============================================================ */
+.adm-tabs{
+  display:flex;
+  gap:.4rem;
+  flex-wrap:nowrap;          /* NEVER wrap — keeps all tabs in one row */
+  overflow-x:auto;           /* scroll horizontally on small screens    */
+  scrollbar-width:thin;
+  scrollbar-color:var(--purple) transparent;
+  margin-bottom:1.8rem;
+  border-bottom:1px solid var(--border);
+  padding-bottom:.9rem;
+  -webkit-overflow-scrolling:touch;
+}
+.adm-tabs::-webkit-scrollbar{height:3px}
+.adm-tabs::-webkit-scrollbar-track{background:transparent}
+.adm-tabs::-webkit-scrollbar-thumb{background:var(--purple);border-radius:2px}
+
+.adm-tab{
+  background:transparent;
+  border:1px solid var(--border);
+  color:rgba(234,234,234,.52);
+  padding:.38rem .82rem;
+  border-radius:6px;
+  cursor:pointer;
+  font-family:'Rajdhani',sans-serif;
+  font-weight:600;
+  font-size:.73rem;
+  letter-spacing:.5px;
+  transition:all .2s;
+  text-transform:uppercase;
+  white-space:nowrap;        /* stop individual tab text from wrapping  */
+  flex-shrink:0;             /* prevent tabs from shrinking             */
+}
 .adm-tab.on,.adm-tab:hover{background:var(--purple);border-color:var(--purple);color:#fff}
+
 .tab{display:none}.tab.on{display:block}
 
 /* FORM */
@@ -227,7 +260,7 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.65);border-top:1px sol
 .empty{text-align:center;padding:2.8rem;color:rgba(234,234,234,.32);font-family:'Rajdhani',sans-serif;font-size:.87rem;letter-spacing:1px}
 .empty-ico{font-size:2.8rem;margin-bottom:.9rem}
 
-@media(max-width:560px){.hero-stats{gap:1.4rem}.stat-n{font-size:1.4rem}.adm-tabs{gap:.3rem}.adm-tab{font-size:.68rem;padding:.32rem .65rem}}
+@media(max-width:560px){.hero-stats{gap:1.4rem}.stat-n{font-size:1.4rem}}
 </style>
 </head>
 <body>
@@ -252,14 +285,14 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.65);border-top:1px sol
       <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="ga" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00E5FF"/><stop offset="100%" stop-color="#8A2BE2"/></linearGradient>
-          <linearGradient id="gb" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FF6A"/><stop offset="100%" stop-color="#00E5FF"/></linearGradient>
+          <linearGradient id="gb2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FF6A"/><stop offset="100%" stop-color="#00E5FF"/></linearGradient>
           <filter id="gf"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         </defs>
         <path d="M26 3L46 12L46 28C46 38 36 46 26 49C16 46 6 38 6 28L6 12Z" fill="url(#ga)" opacity=".14" stroke="url(#ga)" stroke-width="1.5"/>
-        <path d="M26 8L42 16L42 28C42 36 34 43 26 46C18 43 10 36 10 28L10 16Z" fill="none" stroke="url(#gb)" stroke-width=".8" opacity=".52"/>
+        <path d="M26 8L42 16L42 28C42 36 34 43 26 46C18 43 10 36 10 28L10 16Z" fill="none" stroke="url(#gb2)" stroke-width=".8" opacity=".52"/>
         <text x="26" y="33" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="18" font-weight="900" fill="url(#ga)" filter="url(#gf)">Y</text>
         <circle cx="6" cy="12" r="2" fill="#00E5FF" opacity=".78"/><circle cx="46" cy="12" r="2" fill="#8A2BE2" opacity=".78"/><circle cx="26" cy="49" r="2" fill="#00FF6A" opacity=".78"/>
-        <line x1="14" y1="2" x2="38" y2="2" stroke="url(#gb)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="14" y1="2" x2="38" y2="2" stroke="url(#gb2)" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
       <div><div class="logo-main">YAMIN AHMED</div><div class="logo-sub">eFootball Vlog</div></div>
     </a>
@@ -399,12 +432,14 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.65);border-top:1px sol
   <div class="adm-panel">
     <div class="adm-hdr"><h2>⚙ ADMIN PANEL</h2><button class="adm-x" onclick="closeAdm()">✕</button></div>
     <div class="adm-body">
+
+      <!-- TABS — all 5 always visible via horizontal scroll -->
       <div class="adm-tabs">
-        <button class="adm-tab on" onclick="swTab('post')">📝 Add Post</button>
-        <button class="adm-tab" onclick="swTab('squad')">⚽ Add Squad</button>
-        <button class="adm-tab" onclick="swTab('video')">🎬 Featured Video</button>
-        <button class="adm-tab" onclick="swTab('manage')">🗂 Manage</button>
-        <button class="adm-tab" onclick="swTab('firebase')">🔥 Firebase Setup</button>
+        <button class="adm-tab on"  onclick="swTab('post')">📝 Add Post</button>
+        <button class="adm-tab"     onclick="swTab('squad')">⚽ Add Squad</button>
+        <button class="adm-tab"     onclick="swTab('video')">🎬 Featured Video</button>
+        <button class="adm-tab"     onclick="swTab('manage')">🗂 Manage</button>
+        <button class="adm-tab"     onclick="swTab('firebase')">🔥 Firebase Setup</button>
       </div>
 
       <!-- ADD POST -->
@@ -498,9 +533,10 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.65);border-top:1px sol
         <button class="btn-save" onclick="saveFb()">💾 SAVE &amp; CONNECT FIREBASE</button>
         <div class="fb-status-box" id="fbStatusBox"></div>
       </div>
-    </div>
-  </div>
-</div>
+
+    </div><!-- /adm-body -->
+  </div><!-- /adm-panel -->
+</div><!-- /adm-ov -->
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
@@ -512,16 +548,12 @@ footer{position:relative;z-index:1;background:rgba(0,0,0,.65);border-top:1px sol
 //  Works 100% on GitHub Pages
 // ================================================================
 
-// ---------- FIREBASE REST CONFIG ----------
-// Populated after user pastes config and clicks Save
 var FB = {
   ready: false,
   apiKey: '',
   projectId: '',
   storageBucket: '',
-  // Firestore REST base
   fsBase: function() { return 'https://firestore.googleapis.com/v1/projects/'+this.projectId+'/databases/(default)/documents'; },
-  // Storage REST upload base
   stBase: function() { return 'https://firebasestorage.googleapis.com/v0/b/'+this.storageBucket+'/o'; }
 };
 
@@ -586,7 +618,6 @@ function fsGet1(col, id) {
   });
 }
 
-// Encode JS object → Firestore field format
 function fsEncodeDoc(obj) {
   var out = {};
   for (var k in obj) {
@@ -600,7 +631,6 @@ function fsEncodeDoc(obj) {
   return out;
 }
 
-// Decode Firestore fields → JS object
 function fsParseDoc(fields) {
   var out = {};
   for (var k in fields) {
@@ -616,31 +646,7 @@ function fsParseDoc(fields) {
 }
 
 // ================================================================
-//  FIREBASE STORAGE REST UPLOAD
-// ================================================================
-function stUpload(file, path) {
-  return new Promise(function(resolve, reject) {
-    var url = FB.stBase()+'?uploadType=media&name='+encodeURIComponent(path)+'&key='+FB.apiKey;
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', url);
-    xhr.setRequestHeader('Content-Type', file.type);
-    xhr.onload = function() {
-      if (xhr.status === 200) {
-        var data = JSON.parse(xhr.responseText);
-        // Build public download URL
-        var downloadUrl = 'https://firebasestorage.googleapis.com/v0/b/'+FB.storageBucket+'/o/'+encodeURIComponent(path)+'?alt=media';
-        resolve(downloadUrl);
-      } else {
-        reject(new Error('Upload failed: '+xhr.responseText));
-      }
-    };
-    xhr.onerror = function() { reject(new Error('Network error during upload')); };
-    xhr.send(file);
-  });
-}
-
-// ================================================================
-//  POLLING — refresh data every 15 seconds if Firebase connected
+//  POLLING
 // ================================================================
 function loadData() {
   if (FB.ready) {
@@ -656,7 +662,7 @@ function loadData() {
   }
 }
 
-function localPosts() { try { return JSON.parse(localStorage.getItem('ymn_posts')||'[]'); } catch(e){ return []; } }
+function localPosts()  { try { return JSON.parse(localStorage.getItem('ymn_posts')||'[]'); } catch(e){ return []; } }
 function localSquads() { try { return JSON.parse(localStorage.getItem('ymn_squads')||'[]'); } catch(e){ return []; } }
 
 // ================================================================
@@ -777,14 +783,12 @@ function rmImg(k) {
 function doUpload(file, path, barId, progId) {
   return new Promise(function(resolve, reject) {
     if (!FB.ready) {
-      // No Firebase — store as base64 locally
       var r = new FileReader();
       r.onload = function(e) { resolve(e.target.result); };
       r.onerror = reject;
       r.readAsDataURL(file);
       return;
     }
-    // Firebase Storage REST upload
     document.getElementById(progId).classList.add('on');
     var url = 'https://firebasestorage.googleapis.com/v0/b/'+FB.storageBucket+'/o?uploadType=media&name='+encodeURIComponent(path)+'&key='+FB.apiKey;
     var xhr = new XMLHttpRequest();
@@ -800,7 +804,7 @@ function doUpload(file, path, barId, progId) {
         var downloadUrl = 'https://firebasestorage.googleapis.com/v0/b/'+FB.storageBucket+'/o/'+encodeURIComponent(path)+'?alt=media';
         resolve(downloadUrl);
       } else {
-        reject(new Error('Upload failed ('+xhr.status+'). Make sure Firebase Storage is enabled in your project.'));
+        reject(new Error('Upload failed ('+xhr.status+'). Make sure Firebase Storage is enabled.'));
       }
     };
     xhr.onerror = function() { document.getElementById(progId).classList.remove('on'); reject(new Error('Network error')); };
@@ -958,14 +962,14 @@ function upvote(id, btn) {
 //  FEATURED VIDEO
 // ================================================================
 function setVideo() {
-  var url = document.getElementById('vUrl').value.trim();
+  var url   = document.getElementById('vUrl').value.trim();
   var title = document.getElementById('vTitle').value.trim();
-  var desc = document.getElementById('vDesc').value.trim();
+  var desc  = document.getElementById('vDesc').value.trim();
   var m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
   var vid = m ? m[1] : url;
-  if (vid) document.getElementById('featFrame').src = 'https://www.youtube.com/embed/'+vid+'?rel=0';
+  if (vid)   document.getElementById('featFrame').src  = 'https://www.youtube.com/embed/'+vid+'?rel=0';
   if (title) document.getElementById('featTitle').textContent = title;
-  if (desc) document.getElementById('featDesc').textContent = desc;
+  if (desc)  document.getElementById('featDesc').textContent  = desc;
   localStorage.setItem('ymn_feat', JSON.stringify({ vid:vid, title:title, desc:desc }));
   toast('✅ Featured video updated!', 'ok');
 }
@@ -975,9 +979,9 @@ function setVideo() {
   if (!f) return;
   try {
     var d = JSON.parse(f);
-    if (d.vid) document.getElementById('featFrame').src = 'https://www.youtube.com/embed/'+d.vid+'?rel=0';
+    if (d.vid)   document.getElementById('featFrame').src  = 'https://www.youtube.com/embed/'+d.vid+'?rel=0';
     if (d.title) document.getElementById('featTitle').textContent = d.title;
-    if (d.desc) document.getElementById('featDesc').textContent = d.desc;
+    if (d.desc)  document.getElementById('featDesc').textContent  = d.desc;
   } catch(e){}
 })();
 
@@ -986,9 +990,8 @@ function setVideo() {
 // ================================================================
 function saveFb() {
   var raw = document.getElementById('fbIn').value.trim();
-  var sb = document.getElementById('fbStatusBox');
+  var sb  = document.getElementById('fbStatusBox');
   try {
-    // Parse JS object literal (not strict JSON)
     var s = raw;
     s = s.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":');
     s = s.replace(/:\s*'([^']*)'/g, ':"$1"');
@@ -998,26 +1001,20 @@ function saveFb() {
       sb.textContent = '❌ Config is missing apiKey, projectId or storageBucket. Please copy the full config object from Firebase.';
       sb.className = 'fb-status-box err'; return;
     }
-    // Test connection
     var testUrl = 'https://firestore.googleapis.com/v1/projects/'+cfg.projectId+'/databases/(default)/documents?key='+cfg.apiKey+'&pageSize=1';
     fetch(testUrl).then(function(r) {
       if (r.ok || r.status === 200 || r.status === 404) {
-        // 404 just means no documents yet, which is fine
         localStorage.setItem('ymn_fb', JSON.stringify(cfg));
-        FB.apiKey = cfg.apiKey;
-        FB.projectId = cfg.projectId;
-        FB.storageBucket = cfg.storageBucket;
-        FB.ready = true;
+        FB.apiKey = cfg.apiKey; FB.projectId = cfg.projectId; FB.storageBucket = cfg.storageBucket; FB.ready = true;
         document.getElementById('banner').classList.add('hide');
         sb.textContent = '✅ Firebase connected successfully! Reloading in 2 seconds...';
         sb.className = 'fb-status-box ok';
         setTimeout(function(){ location.reload(); }, 2000);
       } else {
-        sb.textContent = '❌ Could not connect (HTTP '+r.status+'). Double-check your apiKey and projectId. Also make sure Firestore is enabled in your Firebase project.';
+        sb.textContent = '❌ Could not connect (HTTP '+r.status+'). Double-check your apiKey and projectId.';
         sb.className = 'fb-status-box err';
       }
     }).catch(function() {
-      // Might be CORS on test but config could still be valid — save anyway
       localStorage.setItem('ymn_fb', JSON.stringify(cfg));
       FB.apiKey = cfg.apiKey; FB.projectId = cfg.projectId; FB.storageBucket = cfg.storageBucket; FB.ready = true;
       sb.textContent = '✅ Config saved! Reloading...';
@@ -1079,8 +1076,7 @@ function loadManage() {
       el.innerHTML = '<div class="empty"><div class="empty-ico">⏳</div>Loading...</div>';
       fsGet(col).then(function(items) { renderMgList(el, items, type); }).catch(function() { renderMgList(el, [], type); });
     } else {
-      var items = col==='posts' ? localPosts() : localSquads();
-      renderMgList(el, items, type);
+      renderMgList(el, col==='posts' ? localPosts() : localSquads(), type);
     }
   };
   loadList('posts','mPosts','post');
@@ -1095,7 +1091,7 @@ function renderMgList(el, items, type) {
   var fn = type==='post'?'delPost':'delSquad';
   el.innerHTML = items.map(function(item) {
     var thumb = item.imageUrl ? '<img src="'+item.imageUrl+'">' : (type==='post' ? catEmoji(item.category) : '⚽');
-    var meta = type==='post' ? (item.category+' · '+(item.date||'')) : ('by '+(item.author||'Anon')+' · '+(item.votes||0)+' votes');
+    var meta  = type==='post' ? (item.category+' · '+(item.date||'')) : ('by '+(item.author||'Anon')+' · '+(item.votes||0)+' votes');
     return '<div class="m-item"><div class="m-thumb">'+thumb+'</div><div class="m-info"><div class="m-ttl">'+item.title+'</div><div class="m-cat">'+meta+'</div></div><button class="btn-del" onclick="'+fn+'(\''+item.id+'\')">✕ Delete</button></div>';
   }).join('');
 }
@@ -1104,7 +1100,7 @@ function renderMgList(el, items, type) {
 //  UTILS
 // ================================================================
 function showSpin(t) { document.getElementById('spinLbl').textContent=t||'LOADING...'; document.getElementById('spinner').classList.add('on'); }
-function hideSpin() { document.getElementById('spinner').classList.remove('on'); }
+function hideSpin()  { document.getElementById('spinner').classList.remove('on'); }
 
 var toastT;
 function toast(msg, type) {
